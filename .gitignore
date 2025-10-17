@@ -1,3 +1,9 @@
+# Build directory
+build/
+
+# Dependencies directory
+deps/
+
 # Prerequisites
 *.d
 
