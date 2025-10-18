@@ -122,3 +122,15 @@ This validates at both compile time and runtime.
 * Use tags that mirror the directory structure for easy filtering in `CMakeLists.txt`, e.g.:
   * Tag `[src][game][entities.hpp]` in `tests/game/entities.test.cpp` file
   * Tag `[src][assets][sounds.hpp]` in `tests/assets/sounds.test.cpp` file
+
+---
+
+## 8. Running Tests
+
+* You need to pass `-DBUILD_TESTS=ON` to build tests:
+  ```sh
+  cd build
+  cmake .. -DBUILD_TESTS=ON
+  cmake --build . --parallel
+  ctest --verbose
+  ```
