@@ -47,7 +47,7 @@ std::size_t count_words_ascii_whitespace(const std::string &str)
 {
     std::size_t words = 0;
     bool in_word = false;
-    for (char c : str) {
+    for (const char c : str) {
         const bool ws = (c == ' ' || c == '\n' || c == '\t' || c == '\r' || c == '\v' || c == '\f');
         if (!ws && !in_word) {
             in_word = true;
@@ -62,7 +62,7 @@ std::size_t count_words_ascii_whitespace(const std::string &str)
 
 std::size_t count_codepoints_utf8(const std::string &str)
 {
-    return sf::Utf8::count(str.begin(), str.end());
+    return sf::Utf8::count(str.cbegin(), str.cend());
 }
 
 }  // namespace core::text

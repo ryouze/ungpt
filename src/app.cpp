@@ -20,7 +20,7 @@ namespace app {
 
 [[nodiscard]] float compute_controls_total_width()
 {
-    ImGuiStyle &style = ImGui::GetStyle();
+    const ImGuiStyle &style = ImGui::GetStyle();
     const float frame_padding_x = style.FramePadding.x;
     const float spacing_x = style.ItemSpacing.x;
     const float w_paste = ImGui::CalcTextSize("Paste").x + frame_padding_x * 2.0f;
@@ -101,7 +101,7 @@ void run()
         (void)dt;
         imgui_context.update(dt);
 
-        ImGuiIO &io = ImGui::GetIO();
+        const ImGuiIO &io = ImGui::GetIO();
         ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Always);
         ImGui::SetNextWindowSize(io.DisplaySize, ImGuiCond_Always);
 
@@ -153,7 +153,7 @@ void run()
             // Main split area, fills remaining height minus bottom status
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.0f, 8.0f));
             const float bottom_row_h = ImGui::GetTextLineHeightWithSpacing();
-            float main_height = std::max(100.0f, ImGui::GetContentRegionAvail().y - bottom_row_h);
+            const float main_height = std::max(100.0f, ImGui::GetContentRegionAvail().y - bottom_row_h);
             if (ImGui::BeginChild("##main", ImVec2(0, main_height), ImGuiChildFlags_None, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
                 const ImGuiTableFlags table_flags = ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_BordersInnerV;
                 if (ImGui::BeginTable("split", 2, table_flags, ImVec2(-1.0f, -1.0f))) {
@@ -164,14 +164,14 @@ void run()
                     ImGui::TableSetColumnIndex(0);
                     ImGui::TextUnformatted("Original");
                     {
-                        ImVec2 sz = ImGui::GetContentRegionAvail();
+                        const ImVec2 sz = ImGui::GetContentRegionAvail();
                         ImGui::InputTextMultiline("##input", &input_text, sz, ImGuiInputTextFlags_AllowTabInput | ImGuiInputTextFlags_NoHorizontalScroll);
                     }
 
                     ImGui::TableSetColumnIndex(1);
                     ImGui::TextUnformatted("Normalized");
                     {
-                        ImVec2 sz = ImGui::GetContentRegionAvail();
+                        const ImVec2 sz = ImGui::GetContentRegionAvail();
                         ImGui::InputTextMultiline("##output", &output_text, sz, ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_NoHorizontalScroll);
                     }
 
