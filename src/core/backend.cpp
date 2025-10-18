@@ -32,14 +32,14 @@ Window::Window()
     sf::VideoMode mode;
 
     // Set the default windowed resolution
-    mode = sf::VideoMode{sf::Vector2u{800, 600}};
+    mode = sf::VideoMode{sf::Vector2u{400, 300}};
     SPDLOG_DEBUG("Current mode is windowed, using default resolution '{}x{}'", mode.size.x, mode.size.y);
 
     // Create the window with the determined video mode, title, state, and context settings
     this->window_.create(mode, window_title, sf::State::Windowed, settings);
 
     // Set minimum size (only relevant for windowed mode)
-    this->window_.setMinimumSize(sf::Vector2u{800, 600});
+    this->window_.setMinimumSize(sf::Vector2u{350, 200});
 
     // Enable vsync (remember: you cannot use both FPS limit and vsync at the same time)
     this->window_.setVerticalSyncEnabled(true);
