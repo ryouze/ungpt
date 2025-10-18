@@ -4,6 +4,7 @@
 
 #include <cstddef>  // for std::size_t
 #include <string>   // for std::string
+#include <utility>  // for std::pair
 
 #include "SFML/System/Utf.hpp"
 
