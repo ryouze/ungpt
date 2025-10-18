@@ -95,6 +95,7 @@ add_library(${PROJECT_NAME}-lib STATIC
   src/core/clipboard.cpp
   src/core/imgui_sfml_ctx.cpp
   src/core/text.cpp
+  src/ui/editor.cpp
 )
 
 # Include headers relatively to the src directory, include generated headers

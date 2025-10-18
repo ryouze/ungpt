@@ -1,0 +1,325 @@
+/**
+ * @file editor.cpp
+ */
+
+#include <algorithm>  // for std::max
+#include <array>      // for std::array
+#include <cstddef>    // for std::size_t
+#include <format>     // for std::format
+#include <span>       // for std::span
+#include <string>     // for std::string
+
+#include <imgui.h>
+#include <misc/cpp/imgui_stdlib.h>  // for std::string with InputText
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/Keyboard.hpp>
+
+#include "core/clipboard.hpp"
+#include "core/text.hpp"
+#include "ui/editor.hpp"
+
+namespace ui::editor {
+
+void Editor::on_event(const sf::Event &event)
+{
+    // Check if the event is a key press
+    if (const auto *key = event.getIf<sf::Event::KeyPressed>()) {
+
+        // If macOS, use the command key as modifier; otherwise, use control key
+#if defined(__APPLE__)
+        const bool modifier_down = key->system;
+#else
+        const bool modifier_down = key->control;
+#endif
+        // If the modifier key is not held down, skip shortcut processing
+        if (!modifier_down) {
+            return;
+        }
+
+        // TODO(ryouze): Add switch case or map here for better readability
+        if (key->code == sf::Keyboard::Key::V) {
+            this->text_ = core::clipboard::read_from_clipboard();
+        }
+        else if (key->code == sf::Keyboard::Key::N) {
+            core::text::remove_unwanted_characters(this->text_);
+        }
+        else if (key->code == sf::Keyboard::Key::C) {
+            core::clipboard::write_to_clipboard(this->text_);
+        }
+        else if (key->code == sf::Keyboard::Key::L) {
+            this->text_.clear();
+        }
+        else if (key->code == sf::Keyboard::Key::Slash) {
+            this->is_help_modal_open_ = true;
+        }
+    }
+}
+
+void Editor::draw()
+{
+    // Fetch the global ImGui IO state for display size queries
+    const ImGuiIO &io = ImGui::GetIO();
+
+    // Fetch the style description for padding and spacing metrics
+    const ImGuiStyle &style = ImGui::GetStyle();
+
+    // Pin the next window position to the top left corner of the render area
+    ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Always);
+
+    // Force the next window size to match the current viewport
+    ImGui::SetNextWindowSize(io.DisplaySize, ImGuiCond_Always);
+
+    // Combine window flags that remove chrome and disable scrolling
+    constexpr ImGuiWindowFlags root_flags = ImGuiWindowFlags_NoTitleBar |
+                                            ImGuiWindowFlags_NoResize |
+                                            ImGuiWindowFlags_NoMove |
+                                            ImGuiWindowFlags_NoCollapse |
+                                            ImGuiWindowFlags_NoScrollbar |
+                                            ImGuiWindowFlags_NoScrollWithMouse;
+
+    // Push consistent padding derived from the configured style
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, style.WindowPadding);
+
+    // Remove rounded corners so the window fills the viewport edge to edge
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+
+    // Remove window borders for a flat canvas look
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+
+    // Begin the root window that contains the entire interface
+    if (ImGui::Begin("##root", nullptr, root_flags)) {
+        // Begin a child window that holds the toolbar widgets
+        if (ImGui::BeginChild("##topbar", ImVec2(0, 0), ImGuiChildFlags_AutoResizeY, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
+            // Draw the toolbar contents into the child window
+            this->draw_top_bar();
+        }
+
+        // Close the toolbar child window
+        ImGui::EndChild();
+
+        // Push padding override for the main editor region
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, style.WindowPadding);
+
+        // Compute the status bar height using the current font metrics
+        const float bottom_row_h = ImGui::GetTextLineHeightWithSpacing();
+
+        // Determine the main area height by subtracting the reserved status bar space
+        const float main_height = std::max(0.0f, ImGui::GetContentRegionAvail().y - bottom_row_h);
+
+        // Begin the child window that hosts the text editor
+        if (ImGui::BeginChild("##main", ImVec2(0, main_height), ImGuiChildFlags_None, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
+            // Draw the multiline editor widget
+            this->draw_editor();
+        }
+
+        // Close the main editor child window
+        ImGui::EndChild();
+
+        // Pop the padding override now that the main region is done
+        ImGui::PopStyleVar();
+
+        // Begin the child window that hosts the bottom status bar
+        if (ImGui::BeginChild("##bottom", ImVec2(0, 0), ImGuiChildFlags_AutoResizeY, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
+            // Draw the live metrics into the status bar
+            this->draw_bottom_status();
+        }
+
+        // Close the status bar child window
+        ImGui::EndChild();
+
+        // Request the help modal to open when the flag is toggled
+        // TODO(ryouze): Move this logic to `draw_shortcuts_modal`
+        if (this->is_help_modal_open_) {
+            ImGui::OpenPopup("Shortcuts");
+        }
+
+        // Draw the modal even if not visible so state stays in sync
+        this->draw_shortcuts_modal();
+
+        // Update the help flag when the modal is no longer open
+        if (!ImGui::IsPopupOpen("Shortcuts", ImGuiPopupFlags_AnyPopupId)) {
+            this->is_help_modal_open_ = false;
+        }
+
+        // Finish populating the root window contents
+    }
+
+    // End the root window definition
+    ImGui::End();
+
+    // Pop every style override pushed before creating the root window
+    ImGui::PopStyleVar(3);
+}
+
+float Editor::compute_center_offset_for_labels(std::span<const std::string> labels) const
+{
+    // Access the active style for padding and spacing metrics
+    const ImGuiStyle &style = ImGui::GetStyle();
+
+    // Extract the horizontal padding applied inside buttons
+    const float frame_padding_x = style.FramePadding.x;
+
+    // Extract the spacing between widgets measured along X
+    const float spacing_x = style.ItemSpacing.x;
+
+    // Initialize the accumulated width so the first addition cancels the spacing term
+    float total_width = -spacing_x;
+
+    // Iterate over each label to compute the final row width
+    for (const std::string &label : labels) {
+        // Calculate the width of a button by adding label width and padding
+        const float button_width = ImGui::CalcTextSize(label.c_str()).x + frame_padding_x * 2.0f;
+
+        // Accumulate the button width and the spacing that follows it
+        total_width += button_width + spacing_x;
+    }
+
+    // Query the current region width available for the toolbar
+    const float available_width = ImGui::GetContentRegionAvail().x;
+
+    // Compute the horizontal offset that centers the toolbar row
+    const float offset_x = (available_width > total_width) ? (available_width - total_width) * 0.5f : 0.0f;
+
+    // Return the computed offset so callers can align the cursor
+    return offset_x;
+}
+
+void Editor::draw_top_bar()
+{
+    // Prepare a fixed list of button labels for toolbar actions
+    const std::array<std::string, 5> labels = {"Paste", "Normalize", "Copy", "Clear", "?"};
+
+    // Compute a horizontal offset that centers the toolbar buttons
+    const float offset_x = this->compute_center_offset_for_labels(std::span<const std::string>(labels.data(), labels.size()));
+
+    // Move the cursor so the buttons start centered within the region
+    ImGui::SetCursorPosX(offset_x);
+
+    // Render the paste button that pulls text from the clipboard helper
+    if (ImGui::Button(labels[0].c_str())) {
+        this->text_ = core::clipboard::read_from_clipboard();
+    }
+
+    // Keep subsequent buttons on the same row
+    ImGui::SameLine();
+
+    // Render the normalize button that cleans up smart punctuation via core::text
+    if (ImGui::Button(labels[1].c_str())) {
+        core::text::remove_unwanted_characters(this->text_);
+    }
+
+    // Keep the next button on the same row
+    ImGui::SameLine();
+
+    // Render the copy button that pushes text to the clipboard helper
+    if (ImGui::Button(labels[2].c_str())) {
+        core::clipboard::write_to_clipboard(this->text_);
+    }
+
+    // Keep the next button on the same row
+    ImGui::SameLine();
+
+    // Render the clear button that empties the editor text
+    if (ImGui::Button(labels[3].c_str())) {
+        this->text_.clear();
+    }
+
+    // Keep the help button on the same row
+    ImGui::SameLine();
+
+    // Render the help button that opens the shortcuts modal
+    if (ImGui::Button(labels[4].c_str())) {
+        this->is_help_modal_open_ = true;
+    }
+}
+
+void Editor::draw_editor()
+{
+    // Query the available size to grow the editor with the window
+    const ImVec2 size = ImGui::GetContentRegionAvail();
+
+    // Submit the multiline text widget that edits the internal text
+    ImGui::InputTextMultiline("##text", &this->text_, size, ImGuiInputTextFlags_AllowTabInput);
+}
+
+// Define the routine that shows live text metrics
+void Editor::draw_bottom_status() const
+{
+    // Count the number of words within the current text
+    const std::size_t word_count = core::text::count_words(this->text_);
+
+    // Count the number of characters within the current text
+    const std::size_t char_count = core::text::count_characters(this->text_);
+
+    // Format the status string using the current metrics
+    const std::string status = std::format("Words: {}  Characters: {}", word_count, char_count);
+
+    // Determine the available width within the status bar
+    const float available_width = ImGui::GetContentRegionAvail().x;
+
+    // Measure the pixel width of the status string with the active font
+    const float text_width = ImGui::CalcTextSize(status.c_str()).x;
+
+    // Compute a centered X offset when there is enough room
+    const float x = (available_width > text_width) ? (available_width - text_width) * 0.5f : 0.0f;
+
+    // Position the cursor to center the status text
+    ImGui::SetCursorPosX(x);
+
+    // Render the status line using the formatted string
+    ImGui::TextUnformatted(status.c_str());
+}
+
+void Editor::draw_shortcuts_modal() const
+{
+    // Preserve the modal size so it envelopes the content tightly
+    constexpr ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;
+
+    // If macOS, use the command key as modifier; otherwise, use control key
+    if (ImGui::BeginPopupModal("Shortcuts", nullptr, flags)) {
+#if defined(__APPLE__)
+        const std::string modifier = "Cmd";
+#else
+        const std::string modifier = "Ctrl";
+#endif
+        // Describe the paste shortcut using the detected modifier label
+        const std::string line1 = std::format("{}+V : Paste", modifier);
+
+        // Describe the normalize shortcut using the detected modifier label
+        const std::string line2 = std::format("{}+N : Normalize", modifier);
+
+        // Describe the copy shortcut using the detected modifier label
+        const std::string line3 = std::format("{}+C : Copy", modifier);
+
+        // Describe the clear shortcut using the detected modifier label
+        const std::string line4 = std::format("{}+L : Clear", modifier);
+
+        // Describe the help shortcut using the detected modifier label
+        const std::string line5 = std::format("{}+/ : Open this help", modifier);
+
+        // Render the paste shortcut text
+        ImGui::TextUnformatted(line1.c_str());
+
+        // Render the normalize shortcut text
+        ImGui::TextUnformatted(line2.c_str());
+
+        // Render the copy shortcut text
+        ImGui::TextUnformatted(line3.c_str());
+
+        // Render the clear shortcut text
+        ImGui::TextUnformatted(line4.c_str());
+
+        // Draw a separator to isolate the final entry
+        ImGui::Separator();
+
+        // Render the help shortcut text
+        ImGui::TextUnformatted(line5.c_str());
+
+        // Do not render a close button; modal has a button in the top right corner
+
+        // End the popup modal after populating all widgets
+        ImGui::EndPopup();
+    }
+}
+
+}  // namespace ui::editor
