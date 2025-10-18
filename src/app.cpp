@@ -2,11 +2,11 @@
  * @file app.cpp
  */
 
-#include <algorithm>  // for std::max
-#include <array>      // for std::array
-#include <cstddef>    // for std::size_t
-#include <format>     // for std::format
-#include <string>     // for std::string
+#include <algorithm>    // for std::max
+#include <array>        // for std::array
+#include <cstddef>      // for std::size_t
+#include <format>       // for std::format
+#include <string_view>  // for std::string_view
 
 #include "SFML/Window/Event.hpp"
 #include "SFML/Window/Keyboard.hpp"
@@ -88,9 +88,7 @@ void run()
                                                 ImGuiWindowFlags_NoMove |
                                                 ImGuiWindowFlags_NoCollapse |
                                                 ImGuiWindowFlags_NoScrollbar |
-                                                ImGuiWindowFlags_NoScrollWithMouse |
-                                                ImGuiWindowFlags_NoBringToFrontOnFocus |
-                                                ImGuiWindowFlags_NoNavFocus;
+                                                ImGuiWindowFlags_NoScrollWithMouse;
 
         // Reduce padding and rounding for the root window
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, style.WindowPadding);
