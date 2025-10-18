@@ -20,8 +20,8 @@ namespace core::clipboard {
 /**
  * @brief Write a string to the system clipboard.
  *
- * @param utf8 UTF-8 string to write to the clipboard (e.g., "hello world").
+ * @param text UTF-8 string to write to the clipboard (e.g., "hello world").
  */
-void write_to_clipboard(const std::string &utf8);
+void write_to_clipboard(const std::string &text);
 
 }  // namespace core::clipboard

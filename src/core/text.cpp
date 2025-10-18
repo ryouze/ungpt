@@ -13,9 +13,9 @@ namespace core::text {
 
 namespace {
 
-void replace_all_in_place(std::string &str,
-                          const std::string &from,
-                          const std::string &to)
+void replace_all_occurrences(std::string &str,
+                             const std::string &from,
+                             const std::string &to)
 {
     if (from.empty()) {
         return;
@@ -30,24 +30,24 @@ void replace_all_in_place(std::string &str,
 
 }  // namespace
 
-void normalize_text_in_place(std::string &utf8)
+void remove_unwanted_characters(std::string &text)
 {
-    replace_all_in_place(utf8, std::string("\xE2\x80\x9C"), "\"");
-    replace_all_in_place(utf8, std::string("\xE2\x80\x9D"), "\"");
-    replace_all_in_place(utf8, std::string("\xE2\x80\x98"), "'");
-    replace_all_in_place(utf8, std::string("\xE2\x80\x99"), "'");
-    replace_all_in_place(utf8, std::string("\xE2\x80\x93"), "-");
-    replace_all_in_place(utf8, std::string("\xE2\x80\x94"), "-");
-    replace_all_in_place(utf8, std::string("\xE2\x80\xA6"), "...");
-    replace_all_in_place(utf8, std::string("\xC2\xA0"), " ");
-    replace_all_in_place(utf8, std::string("\xE2\x80\x8B"), "");
+    replace_all_occurrences(text, std::string("\xE2\x80\x9C"), "\"");
+    replace_all_occurrences(text, std::string("\xE2\x80\x9D"), "\"");
+    replace_all_occurrences(text, std::string("\xE2\x80\x98"), "'");
+    replace_all_occurrences(text, std::string("\xE2\x80\x99"), "'");
+    replace_all_occurrences(text, std::string("\xE2\x80\x93"), "-");
+    replace_all_occurrences(text, std::string("\xE2\x80\x94"), "-");
+    replace_all_occurrences(text, std::string("\xE2\x80\xA6"), "...");
+    replace_all_occurrences(text, std::string("\xC2\xA0"), " ");
+    replace_all_occurrences(text, std::string("\xE2\x80\x8B"), "");
 }
 
-std::size_t count_words_ascii_whitespace(const std::string &str)
+std::size_t count_words(const std::string &text)
 {
     std::size_t words = 0;
     bool in_word = false;
-    for (const char c : str) {
+    for (const char c : text) {
         const bool ws = (c == ' ' || c == '\n' || c == '\t' || c == '\r' || c == '\v' || c == '\f');
         if (!ws && !in_word) {
             in_word = true;
@@ -60,9 +60,9 @@ std::size_t count_words_ascii_whitespace(const std::string &str)
     return words;
 }
 
-std::size_t count_codepoints_utf8(const std::string &str)
+std::size_t count_characters(const std::string &text)
 {
-    return sf::Utf8::count(str.cbegin(), str.cend());
+    return sf::Utf8::count(text.cbegin(), text.cend());
 }
 
 }  // namespace core::text

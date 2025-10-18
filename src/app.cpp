@@ -84,7 +84,7 @@ void run()
                 }
                 else if (key->code == sf::Keyboard::Key::N) {
                     output_text = input_text;
-                    core::text::normalize_text_in_place(output_text);
+                    core::text::remove_unwanted_characters(output_text);
                 }
                 else if (key->code == sf::Keyboard::Key::C) {
                     core::clipboard::write_to_clipboard(output_text);
@@ -138,7 +138,7 @@ void run()
                 }
                 if (do_norm) {
                     output_text = input_text;
-                    core::text::normalize_text_in_place(output_text);
+                    core::text::remove_unwanted_characters(output_text);
                 }
                 if (do_copy) {
                     core::clipboard::write_to_clipboard(output_text);
@@ -183,10 +183,10 @@ void run()
 
             // bottom status
             if (ImGui::BeginChild("##bottom", ImVec2(0, 0), ImGuiChildFlags_AutoResizeY, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
-                const std::size_t in_words = core::text::count_words_ascii_whitespace(input_text);
-                const std::size_t out_words = core::text::count_words_ascii_whitespace(output_text);
-                const std::size_t in_chars = core::text::count_codepoints_utf8(input_text);
-                const std::size_t out_chars = core::text::count_codepoints_utf8(output_text);
+                const std::size_t in_words = core::text::count_words(input_text);
+                const std::size_t out_words = core::text::count_words(output_text);
+                const std::size_t in_chars = core::text::count_characters(input_text);
+                const std::size_t out_chars = core::text::count_characters(output_text);
 
                 const float half = ImGui::GetContentRegionAvail().x * 0.5f;
                 ImGui::Text("Words: %zu  Chars: %zu", in_words, in_chars);

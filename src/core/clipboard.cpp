@@ -19,11 +19,11 @@ std::string read_from_clipboard()
     return {utf8.cbegin(), utf8.cend()};
 }
 
-void write_to_clipboard(const std::string &utf8)
+void write_to_clipboard(const std::string &text)
 {
     // sf::String handles conversion from UTF-8 to UTF-32
-    const sf::String text = sf::String::fromUtf8(utf8.cbegin(), utf8.cend());
-    sf::Clipboard::setString(text);
+    const sf::String utf32 = sf::String::fromUtf8(text.cbegin(), text.cend());
+    sf::Clipboard::setString(utf32);
 }
 
 }  // namespace core::clipboard
