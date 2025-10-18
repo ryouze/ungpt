@@ -63,9 +63,9 @@ class Editor {
     void update_and_draw_bottom_status() const;
 
     /**
-     * @brief Render the shortcuts modal if it has been requested.
+     * @brief Render the shortcuts modal and reset the toggle when closed.
      */
-    void update_and_draw_shortcuts_modal() const;
+    void update_and_draw_shortcuts_modal();
 
     /**
      * @brief Text displayed inside the editor widget.

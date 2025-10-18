@@ -136,19 +136,8 @@ void Editor::update_and_draw()
         // Close the status bar child window
         ImGui::EndChild();
 
-        // Request the help modal to open when the flag is toggled
-        // TODO(ryouze): Move this logic to `update_and_draw_shortcuts_modal`
-        if (this->is_help_modal_open_) {
-            ImGui::OpenPopup("Shortcuts");
-        }
-
         // Draw the modal even if not visible so state stays in sync
         this->update_and_draw_shortcuts_modal();
-
-        // Update the help flag when the modal is no longer open
-        if (!ImGui::IsPopupOpen("Shortcuts", ImGuiPopupFlags_AnyPopupId)) {
-            this->is_help_modal_open_ = false;
-        }
 
         // Finish populating the root window contents
     }
@@ -279,10 +268,15 @@ void Editor::update_and_draw_bottom_status() const
     ImGui::TextUnformatted(status.c_str());
 }
 
-void Editor::update_and_draw_shortcuts_modal() const
+void Editor::update_and_draw_shortcuts_modal()
 {
     // Preserve the modal size so it envelopes the content tightly
     constexpr ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;
+
+    // Request the help modal to open when the flag is toggled
+    if (this->is_help_modal_open_) {
+        ImGui::OpenPopup("Shortcuts");
+    }
 
     // If macOS, use the command key as modifier; otherwise, use control key
     if (ImGui::BeginPopupModal("Shortcuts", nullptr, flags)) {
@@ -328,6 +322,11 @@ void Editor::update_and_draw_shortcuts_modal() const
 
         // End the popup modal after populating all widgets
         ImGui::EndPopup();
+    }
+
+    // Update the help flag when the modal is no longer open
+    if (!ImGui::IsPopupOpen("Shortcuts", ImGuiPopupFlags_AnyPopupId)) {
+        this->is_help_modal_open_ = false;
     }
 }
 
