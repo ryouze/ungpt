@@ -178,7 +178,8 @@ elseif(WIN32)
   # If on Windows, add an icon to the executable
 
   # Generate RC file for Windows icon
-  # The macro is not used for setting the titlebar icon, we start the game in fullscreen mode
+  # The macro is not used for setting the titlebar icon, we keep the default one from Windows
+  # because macOS is the primary target platform
   file(GENERATE
     OUTPUT "${PROJECT_BINARY_DIR}/generated/icon.rc"
     CONTENT "#define IDI_ICON1 101\n\nIDI_ICON1 ICON \"${PROJECT_SOURCE_DIR}/cmake/assets/Icon.ico\""
@@ -195,33 +196,27 @@ install(TARGETS ${PROJECT_NAME}
   RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"  # Executable on Linux/Windows
 )
 
-# # Add tests if enabled
-# if(BUILD_TESTS)
-#   message(STATUS "Tests are enabled, creating test executable...")
-#   # Enable testing with CTest
-#   enable_testing()
+# Add tests if enabled
+if(BUILD_TESTS)
+  message(STATUS "Tests are enabled, creating test executable...")
+  # Enable testing with CTest
+  enable_testing()
 
-#   # Add test executable
-#   add_executable(tests
-#     # find tests -name "*.cpp" | sort
-#     tests/assets/sounds.test.cpp
-#     tests/assets/textures.test.cpp
-#     tests/core/colors.test.cpp
-#     tests/core/io.test.cpp
-#     tests/core/platform.test.cpp
-#     tests/core/world.test.cpp
-#     tests/game/entities.test.cpp
-#   )
-#   target_link_libraries(tests PRIVATE ${PROJECT_NAME}-lib)
+  # Add test executable
+  add_executable(tests
+    # find tests -name "*.cpp" | sort
+    tests/core/text.test.cpp
+  )
+  target_link_libraries(tests PRIVATE ${PROJECT_NAME}-lib)
 
-#   # Download and link test dependencies
-#   fetch_and_link_external_test_dependencies("tests")
+  # Download and link test dependencies
+  fetch_and_link_external_test_dependencies("tests")
 
-#   # Register tests separately with CTest
-#   add_test(NAME "[src][assets]" COMMAND tests "[src][assets]")
-#   add_test(NAME "[src][core]" COMMAND tests "[src][core]")
-#   add_test(NAME "[src][game]" COMMAND tests "[src][game]")
-# endif()
+  # Register tests separately with CTest
+  # add_test(NAME "[src][assets]" COMMAND tests "[src][assets]")
+  add_test(NAME "[src][core]" COMMAND tests "[src][core]")
+  # add_test(NAME "[src][ui]" COMMAND tests "[src][ui]")
+endif()
 
 # Print comprehensive build summary
 message(STATUS "")

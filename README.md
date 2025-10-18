@@ -160,7 +160,7 @@ For debug builds, the logging level is set to `debug` by default, which is very 
 > While `cmake/External.cmake` defines `SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG` in debug builds, this only affects compile-time filtering. The runtime verbosity is controlled by `spdlog::set_level()`, which is called in `main.cpp` to enable `debug`-level messages during execution.
 
 
-<!-- ### Testing
+### Testing
 
 Tests are included in the project but are not built by default.
 
@@ -170,7 +170,7 @@ To enable and build the tests manually, run the following commands from the `bui
 cmake .. -DBUILD_TESTS=ON
 cmake --build . --parallel
 ctest --verbose
-``` -->
+```
 
 
 ## Credits
