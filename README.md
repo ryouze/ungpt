@@ -9,13 +9,16 @@ ungpt is a cross-platform GUI app that converts ChatGPT's smart punctuation and 
 
 ## Motivation
 
-I frequently use ChatGPT for fixing grammar and rephrasing text. However, I often find myself needing to manually clean up the output via Find & Replace to remove unwanted formatting like so:
+Large Language Models (LLMs) often produce text containing "smart" punctuation and typographic Unicode symbols, such as:
 
-- Replace em dash (`—`) with normal dash (`-`)
-- Replace curly quotes (`“”‘’`) with straight quotes (`""''`)
-- Replace ellipsis (`…`) with three periods (`...`)
+* Em dashes (`—`) instead of ASCII dashes (`-`)
+* Curly quotes (`“ ” ‘ ’`) instead of straight quotes (`" '`)
+* Ellipses (`…`) instead of three dots (`...`)
 
-This process is quite tedious, so I decided to create a small GUI application that allows me to quickly paste text, clean it, and copy the normalized output with basically zero effort.
+Manually fixing these with Find & Replace is tedious. I do it so frequently that I decided to build a small app to automate the process.
+
+All you have to do is paste text from ChatGPT and copy the clean result.
+
 
 ## Features
 
