@@ -32,16 +32,24 @@ void replace_all_occurrences(std::string &str,
 
 void remove_unwanted_characters(std::string &text)
 {
-    // Single quotes
-    replace_all_occurrences(text, "‘", "'");
-    replace_all_occurrences(text, "’", "'");
-    // Double quotes
-    replace_all_occurrences(text, "“", "\"");
-    replace_all_occurrences(text, "”", "\"");
-    // Dashes
-    replace_all_occurrences(text, "—", "-");
-    // Dots
-    replace_all_occurrences(text, "…", "...");
+    using Pair = std::pair<std::string, std::string>;
+
+    constexpr std::array<Pair, 6> replacements = {{
+        // Single quotes
+        {"‘", "'"},
+        {"’", "'"},
+        // Double quotes
+        {"“", "\""},
+        {"”", "\""},
+        // Dashes
+        {"—", "-"},
+        // Dots
+        {"…", "..."},
+    }};
+
+    for (const auto &pair : replacements) {
+        replace_all_occurrences(text, pair.first, pair.second);
+    }
 }
 
 std::size_t count_words(const std::string &text)
