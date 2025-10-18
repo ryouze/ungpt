@@ -41,20 +41,26 @@ void run()
         // Handle key presses for shortcuts
         if (const auto *key = event.getIf<sf::Event::KeyPressed>()) {
 #if defined(__APPLE__)
+            // On macOS the Command key is reported as system
             const bool modifier_down = key->system;
 #else
+            // On other platforms we fall back to CTRL
             const bool modifier_down = key->control;
 #endif
             if (modifier_down) {
+                // Cmd/CTRL + V pastes clipboard text into the editor
                 if (key->code == sf::Keyboard::Key::V) {
                     text = core::clipboard::read_from_clipboard();
                 }
+                // Cmd/CTRL + N normalizes the text in place
                 else if (key->code == sf::Keyboard::Key::N) {
                     core::text::remove_unwanted_characters(text);
                 }
+                // Cmd/CTRL + C copies the editor contents to the clipboard
                 else if (key->code == sf::Keyboard::Key::C) {
                     core::clipboard::write_to_clipboard(text);
                 }
+                // Cmd/CTRL + L clears the editor
                 else if (key->code == sf::Keyboard::Key::L) {
                     text.clear();
                 }
@@ -63,13 +69,17 @@ void run()
     };
 
     const auto on_update = [&](const float dt) {
-        (void)dt;
+        // Pass elapsed time to ImGui
         imgui_context.update(dt);
 
+        // Access ImGui IO for display size
         const ImGuiIO &io = ImGui::GetIO();
+        // Lock the root window to the top-left corner every frame
         ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Always);
+        // Make the root window fill the entire display area
         ImGui::SetNextWindowSize(io.DisplaySize, ImGuiCond_Always);
 
+        // Disable all window decorations and interactions for the root window
         constexpr ImGuiWindowFlags root_flags = ImGuiWindowFlags_NoTitleBar |
                                                 ImGuiWindowFlags_NoResize |
                                                 ImGuiWindowFlags_NoMove |
@@ -79,20 +89,28 @@ void run()
                                                 ImGuiWindowFlags_NoBringToFrontOnFocus |
                                                 ImGuiWindowFlags_NoNavFocus;
 
+        // Reduce padding and rounding for the root window
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.0f, 8.0f));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 
         if (ImGui::Begin("##root", nullptr, root_flags)) {
+            // The root window holds every other panel for the application
+            // Render toolbar with action buttons centered along the top
             if (ImGui::BeginChild("##topbar",
                                   ImVec2(0, 0),
                                   ImGuiChildFlags_AutoResizeY,
                                   ImGuiWindowFlags_NoScrollbar |
                                       ImGuiWindowFlags_NoScrollWithMouse)) {
 
+                // Access style for measurements
                 const ImGuiStyle &style = ImGui::GetStyle();
+                // Horizontal padding applied to each side of a button label
                 const float frame_padding_x = style.FramePadding.x;
+                // Horizontal spacing between consecutive widgets
                 const float spacing_x = style.ItemSpacing.x;
+                // Measure button widths so we can center the row regardless of font
+                // TODO(ryouze): Do we need this? We use the default font
                 const float total_width = (ImGui::CalcTextSize("Paste").x +
                                            frame_padding_x * 2.0f) +
                                           (ImGui::CalcTextSize("Normalize").x +
@@ -105,26 +123,49 @@ void run()
                                            frame_padding_x * 2.0f) +
                                           spacing_x * 4.0f;
 
+                // Center the button row by shifting the cursor within the child
                 const float available_width = ImGui::GetContentRegionAvail().x;
                 ImGui::SetCursorPosX(ImGui::GetCursorPosX() +
                                      std::max(0.0f, (available_width - total_width) * 0.5f));
 
-                bool do_paste = false, do_norm = false, do_copy = false, do_clear = false;
+                bool do_paste = false;
+                bool do_norm = false;
+                bool do_copy = false;
+                bool do_clear = false;
+
+                // Paste button reads clipboard content into the editor
                 if (ImGui::Button("Paste"))
                     do_paste = true;
+
+                // Keep the next widget on the same horizontal row
                 ImGui::SameLine();
+
+                // Normalize button cleans the text with the project formatter
                 if (ImGui::Button("Normalize"))
                     do_norm = true;
+
+                // Keep the next widget on the same horizontal row
                 ImGui::SameLine();
+
+                // Copy button writes the current text to the clipboard
                 if (ImGui::Button("Copy"))
                     do_copy = true;
+
+                // Keep the next widget on the same horizontal row
                 ImGui::SameLine();
+
+                // Clear button empties the editor immediately
                 if (ImGui::Button("Clear"))
                     do_clear = true;
+
+                // Keep the next widget on the same horizontal row
                 ImGui::SameLine();
+
+                // Question mark button toggles the shortcut modal
                 if (ImGui::Button("?"))
                     is_help_modal_open = true;
 
+                // Perform deferred toolbar actions after layout is done
                 if (do_paste)
                     text = core::clipboard::read_from_clipboard();
                 if (do_norm)
@@ -135,34 +176,50 @@ void run()
                     text.clear();
             }
 
+            // Finish the toolbar child window and return to the root window
             ImGui::EndChild();
 
+            // Restore default padding for the main editor area
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.0f, 8.0f));
+
+            // Reserve space for the statistics row at the bottom
             const float bottom_row_h = ImGui::GetTextLineHeightWithSpacing();
             const float main_height = std::max(100.0f, ImGui::GetContentRegionAvail().y - bottom_row_h);
+
+            // Present the multiline text editor occupying most of the window
             if (ImGui::BeginChild("##main",
                                   ImVec2(0, main_height),
                                   ImGuiChildFlags_None,
                                   ImGuiWindowFlags_NoScrollbar |
                                       ImGuiWindowFlags_NoScrollWithMouse)) {
 
+                // Use all remaining content space for the multiline widget
                 const ImVec2 sz = ImGui::GetContentRegionAvail();
-                ImGui::InputTextMultiline("##text", &text, sz, ImGuiInputTextFlags_AllowTabInput | ImGuiInputTextFlags_NoHorizontalScroll);
+                ImGui::InputTextMultiline("##text",
+                                          &text,
+                                          sz,
+                                          ImGuiInputTextFlags_AllowTabInput);
             }
 
+            // Finish the text editor child window and restore to the root level
             ImGui::EndChild();
+
+            // Restore the earlier window padding so later panels use defaults
             ImGui::PopStyleVar();
 
+            // Show statistics row at the bottom to report words and characters
             if (ImGui::BeginChild("##bottom",
                                   ImVec2(0, 0),
                                   ImGuiChildFlags_AutoResizeY,
                                   ImGuiWindowFlags_NoScrollbar |
                                       ImGuiWindowFlags_NoScrollWithMouse)) {
 
+                // Calculate human friendly metrics every frame
                 const std::size_t words = core::text::count_words(text);
                 const std::size_t chars = core::text::count_characters(text);
                 const std::string status = std::format("Words: {}  Characters: {}", words, chars);
 
+                // Center the metrics by offsetting the cursor before drawing text
                 const float available_width = ImGui::GetContentRegionAvail().x;
                 const float text_width = ImGui::CalcTextSize(status.c_str()).x;
                 const float x = ImGui::GetCursorPosX() +
@@ -173,18 +230,25 @@ void run()
             }
             ImGui::EndChild();
 
-            if (is_help_modal_open)
+            // Open the help popup if a toolbar or shortcut action requested it
+            if (is_help_modal_open) {
                 ImGui::OpenPopup("Shortcuts");
+            }
+
+            // Display a quick reference modal for keyboard shortcuts
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding,
                                 ImVec2(12.0f, 12.0f));
             if (ImGui::BeginPopupModal("Shortcuts",
                                        &is_help_modal_open,
                                        ImGuiWindowFlags_AlwaysAutoResize)) {
 #if defined(__APPLE__)
+                // Label the modifier key appropriately for macOS users
                 const std::string_view mod = "Cmd";
 #else
+                // Label the modifier key appropriately for other platforms
                 const std::string_view mod = "Ctrl";
 #endif
+                // Build human readable shortcut labels to display in order
                 const std::string l1 = std::format("{}+V : Paste", mod);
                 const std::string l2 = std::format("{}+N : Normalize", mod);
                 const std::string l3 = std::format("{}+C : Copy", mod);
@@ -195,20 +259,29 @@ void run()
                 ImGui::TextUnformatted(l4.c_str());
                 ImGui::EndPopup();
             }
+            // Restore the modal window padding override
             ImGui::PopStyleVar();
         }
+        // Close the root window so ImGui knows the layout is complete
         ImGui::End();
+        // Pop the three style overrides pushed before the root window
         ImGui::PopStyleVar(3);
     };
 
+    // Render callback clears the frame, draws ImGui, and presents the buffer
     const auto on_render = [&](sf::RenderWindow &rt) {
+        // Clear removes artifacts from the previous frame
         rt.clear();
+        // Render draws the ImGui command list into the render target
         imgui_context.render();
+        // Display swaps the back buffer onto the screen
         rt.display();
     };
 
+    // Bring the application window to the foreground for easier testing
     // Ask OS to switch to this window and start the main loop
     window.raw().requestFocus();
+    // Start the backend event loop with the configured callbacks
     window.run(on_event, on_update, on_render);
 }
 
