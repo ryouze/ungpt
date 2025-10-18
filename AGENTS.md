@@ -93,9 +93,9 @@ Applies to **all source files** regardless of language.
 * Files in `src/core/` are **mutually independent**.
   They may only depend on the standard library, SFML, or external libs.
   No file in `src/core/` may `#include` another core module.
-* Files in `src/game/` may include headers from `src/core/` but **not from other `src/game/` modules**.
-  This enforces a one-way dependency from `game` -> `core`.
-* The application layer (e.g. `app.cpp`) is allowed to import any `core` or `game` module.
+* Files in `src/ui/` may include headers from `src/core/` but **not from other `src/ui/` modules**.
+  This enforces a one-way dependency from `ui` -> `core`.
+* The application layer (e.g. `app.cpp`) is allowed to import any `core` or `ui` module.
 
 ---
 
