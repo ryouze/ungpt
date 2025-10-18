@@ -3,7 +3,9 @@
  */
 
 #include <algorithm>  // for std::max
+#include <array>      // for std::array
 #include <cstddef>    // for std::size_t
+#include <format>     // for std::format
 #include <string>     // for std::string
 
 #include "SFML/Window/Event.hpp"
@@ -105,58 +107,58 @@ void run()
 
                 // Access style for measurements
                 const ImGuiStyle &style = ImGui::GetStyle();
+                // Labels used by the toolbar buttons
+                constexpr std::array<const char *, 5> button_labels = {
+                    "Paste",
+                    "Normalize",
+                    "Copy",
+                    "Clear",
+                    "?"};
                 // Horizontal padding applied to each side of a button label
                 const float frame_padding_x = style.FramePadding.x;
                 // Horizontal spacing between consecutive widgets
                 const float spacing_x = style.ItemSpacing.x;
                 // Measure button widths so we can center the row regardless of font
-                // TODO(ryouze): Do we need this? We use the default font
-                const float total_width = (ImGui::CalcTextSize("Paste").x +
-                                           frame_padding_x * 2.0f) +
-                                          (ImGui::CalcTextSize("Normalize").x +
-                                           frame_padding_x * 2.0f) +
-                                          (ImGui::CalcTextSize("Copy").x +
-                                           frame_padding_x * 2.0f) +
-                                          (ImGui::CalcTextSize("Clear").x +
-                                           frame_padding_x * 2.0f) +
-                                          (ImGui::CalcTextSize("?").x +
-                                           frame_padding_x * 2.0f) +
-                                          spacing_x * 4.0f;
+                float total_width = -spacing_x;
+                for (const char *label : button_labels) {
+                    const float button_width = ImGui::CalcTextSize(label).x +
+                                               frame_padding_x * 2.0f;
+                    total_width += button_width + spacing_x;
+                }
 
                 // Center the button row by shifting the cursor within the child
                 const float available_width = ImGui::GetContentRegionAvail().x;
-                ImGui::SetCursorPosX(ImGui::GetCursorPosX() +
-                                     std::max(0.0f, (available_width - total_width) * 0.5f));
-
-                bool do_paste = false;
-                bool do_norm = false;
-                bool do_copy = false;
-                bool do_clear = false;
+                const float offset_x = std::max(0.0f, (available_width - total_width) * 0.5f);
+                ImGui::SetCursorPosX(offset_x);
 
                 // Paste button reads clipboard content into the editor
-                if (ImGui::Button("Paste"))
-                    do_paste = true;
+                if (ImGui::Button("Paste")) {
+                    text = core::clipboard::read_from_clipboard();
+                }
 
                 // Keep the next widget on the same horizontal row
                 ImGui::SameLine();
 
                 // Normalize button cleans the text with the project formatter
-                if (ImGui::Button("Normalize"))
-                    do_norm = true;
+                if (ImGui::Button("Normalize")) {
+                    core::text::remove_unwanted_characters(text);
+                }
 
                 // Keep the next widget on the same horizontal row
                 ImGui::SameLine();
 
                 // Copy button writes the current text to the clipboard
-                if (ImGui::Button("Copy"))
-                    do_copy = true;
+                if (ImGui::Button("Copy")) {
+                    core::clipboard::write_to_clipboard(text);
+                }
 
                 // Keep the next widget on the same horizontal row
                 ImGui::SameLine();
 
                 // Clear button empties the editor immediately
-                if (ImGui::Button("Clear"))
-                    do_clear = true;
+                if (ImGui::Button("Clear")) {
+                    text.clear();
+                }
 
                 // Keep the next widget on the same horizontal row
                 ImGui::SameLine();
@@ -164,16 +166,6 @@ void run()
                 // Question mark button toggles the shortcut modal
                 if (ImGui::Button("?"))
                     is_help_modal_open = true;
-
-                // Perform deferred toolbar actions after layout is done
-                if (do_paste)
-                    text = core::clipboard::read_from_clipboard();
-                if (do_norm)
-                    core::text::remove_unwanted_characters(text);
-                if (do_copy)
-                    core::clipboard::write_to_clipboard(text);
-                if (do_clear)
-                    text.clear();
             }
 
             // Finish the toolbar child window and return to the root window
@@ -222,9 +214,8 @@ void run()
                 // Center the metrics by offsetting the cursor before drawing text
                 const float available_width = ImGui::GetContentRegionAvail().x;
                 const float text_width = ImGui::CalcTextSize(status.c_str()).x;
-                const float x = ImGui::GetCursorPosX() +
-                                std::max(0.0f, (available_width - text_width) * 0.5f);
-
+                const float x = std::max(0.0f,
+                                         (available_width - text_width) * 0.5f);
                 ImGui::SetCursorPosX(x);
                 ImGui::TextUnformatted(status.c_str());
             }
