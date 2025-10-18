@@ -27,7 +27,7 @@ void run()
     core::imgui_sfml_ctx::ImGuiContext imgui_context{window.raw()};
 
     std::string text;
-    bool open_help_modal = false;
+    bool is_help_modal_open = false;
 
     const auto on_event = [&](const sf::Event &event) {
         // Let ImGui handle the event
@@ -38,6 +38,7 @@ void run()
             window.raw().close();
         }
 
+        // Handle key presses for shortcuts
         if (const auto *key = event.getIf<sf::Event::KeyPressed>()) {
 #if defined(__APPLE__)
             const bool modifier_down = key->system;
@@ -69,19 +70,44 @@ void run()
         ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Always);
         ImGui::SetNextWindowSize(io.DisplaySize, ImGuiCond_Always);
 
-        const ImGuiWindowFlags root_flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+        constexpr ImGuiWindowFlags root_flags = ImGuiWindowFlags_NoTitleBar |
+                                                ImGuiWindowFlags_NoResize |
+                                                ImGuiWindowFlags_NoMove |
+                                                ImGuiWindowFlags_NoCollapse |
+                                                ImGuiWindowFlags_NoScrollbar |
+                                                ImGuiWindowFlags_NoScrollWithMouse |
+                                                ImGuiWindowFlags_NoBringToFrontOnFocus |
+                                                ImGuiWindowFlags_NoNavFocus;
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.0f, 8.0f));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+
         if (ImGui::Begin("##root", nullptr, root_flags)) {
-            if (ImGui::BeginChild("##topbar", ImVec2(0, 0), ImGuiChildFlags_AutoResizeY, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
+            if (ImGui::BeginChild("##topbar",
+                                  ImVec2(0, 0),
+                                  ImGuiChildFlags_AutoResizeY,
+                                  ImGuiWindowFlags_NoScrollbar |
+                                      ImGuiWindowFlags_NoScrollWithMouse)) {
+
                 const ImGuiStyle &style = ImGui::GetStyle();
                 const float frame_padding_x = style.FramePadding.x;
                 const float spacing_x = style.ItemSpacing.x;
-                const float total_width = (ImGui::CalcTextSize("Paste").x + frame_padding_x * 2.0f) + (ImGui::CalcTextSize("Normalize").x + frame_padding_x * 2.0f) + (ImGui::CalcTextSize("Copy").x + frame_padding_x * 2.0f) + (ImGui::CalcTextSize("Clear").x + frame_padding_x * 2.0f) + (ImGui::CalcTextSize("?").x + frame_padding_x * 2.0f) + spacing_x * 4.0f;
+                const float total_width = (ImGui::CalcTextSize("Paste").x +
+                                           frame_padding_x * 2.0f) +
+                                          (ImGui::CalcTextSize("Normalize").x +
+                                           frame_padding_x * 2.0f) +
+                                          (ImGui::CalcTextSize("Copy").x +
+                                           frame_padding_x * 2.0f) +
+                                          (ImGui::CalcTextSize("Clear").x +
+                                           frame_padding_x * 2.0f) +
+                                          (ImGui::CalcTextSize("?").x +
+                                           frame_padding_x * 2.0f) +
+                                          spacing_x * 4.0f;
+
                 const float available_width = ImGui::GetContentRegionAvail().x;
-                ImGui::SetCursorPosX(ImGui::GetCursorPosX() + std::max(0.0f, (available_width - total_width) * 0.5f));
+                ImGui::SetCursorPosX(ImGui::GetCursorPosX() +
+                                     std::max(0.0f, (available_width - total_width) * 0.5f));
 
                 bool do_paste = false, do_norm = false, do_copy = false, do_clear = false;
                 if (ImGui::Button("Paste"))
@@ -97,7 +123,7 @@ void run()
                     do_clear = true;
                 ImGui::SameLine();
                 if (ImGui::Button("?"))
-                    open_help_modal = true;
+                    is_help_modal_open = true;
 
                 if (do_paste)
                     text = core::clipboard::read_from_clipboard();
@@ -108,35 +134,52 @@ void run()
                 if (do_clear)
                     text.clear();
             }
+
             ImGui::EndChild();
 
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.0f, 8.0f));
             const float bottom_row_h = ImGui::GetTextLineHeightWithSpacing();
             const float main_height = std::max(100.0f, ImGui::GetContentRegionAvail().y - bottom_row_h);
-            if (ImGui::BeginChild("##main", ImVec2(0, main_height), ImGuiChildFlags_None, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
+            if (ImGui::BeginChild("##main",
+                                  ImVec2(0, main_height),
+                                  ImGuiChildFlags_None,
+                                  ImGuiWindowFlags_NoScrollbar |
+                                      ImGuiWindowFlags_NoScrollWithMouse)) {
+
                 const ImVec2 sz = ImGui::GetContentRegionAvail();
                 ImGui::InputTextMultiline("##text", &text, sz, ImGuiInputTextFlags_AllowTabInput | ImGuiInputTextFlags_NoHorizontalScroll);
             }
+
             ImGui::EndChild();
             ImGui::PopStyleVar();
 
-            if (ImGui::BeginChild("##bottom", ImVec2(0, 0), ImGuiChildFlags_AutoResizeY, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
+            if (ImGui::BeginChild("##bottom",
+                                  ImVec2(0, 0),
+                                  ImGuiChildFlags_AutoResizeY,
+                                  ImGuiWindowFlags_NoScrollbar |
+                                      ImGuiWindowFlags_NoScrollWithMouse)) {
+
                 const std::size_t words = core::text::count_words(text);
                 const std::size_t chars = core::text::count_characters(text);
-                const std::string status = std::format("Words: {}  Chars: {}", words, chars);
+                const std::string status = std::format("Words: {}  Characters: {}", words, chars);
 
                 const float available_width = ImGui::GetContentRegionAvail().x;
                 const float text_width = ImGui::CalcTextSize(status.c_str()).x;
-                const float x = ImGui::GetCursorPosX() + std::max(0.0f, (available_width - text_width) * 0.5f);
+                const float x = ImGui::GetCursorPosX() +
+                                std::max(0.0f, (available_width - text_width) * 0.5f);
+
                 ImGui::SetCursorPosX(x);
                 ImGui::TextUnformatted(status.c_str());
             }
             ImGui::EndChild();
 
-            if (open_help_modal)
+            if (is_help_modal_open)
                 ImGui::OpenPopup("Shortcuts");
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(12.0f, 12.0f));
-            if (ImGui::BeginPopupModal("Shortcuts", &open_help_modal, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_AlwaysAutoResize)) {
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding,
+                                ImVec2(12.0f, 12.0f));
+            if (ImGui::BeginPopupModal("Shortcuts",
+                                       &is_help_modal_open,
+                                       ImGuiWindowFlags_AlwaysAutoResize)) {
 #if defined(__APPLE__)
                 const std::string_view mod = "Cmd";
 #else
@@ -159,7 +202,7 @@ void run()
     };
 
     const auto on_render = [&](sf::RenderWindow &rt) {
-        rt.clear(sf::Color{255, 255, 255});
+        rt.clear();
         imgui_context.render();
         rt.display();
     };
