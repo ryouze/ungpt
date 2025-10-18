@@ -14,7 +14,8 @@ namespace core::text {
 
 void remove_unwanted_characters(std::string &text)
 {
-    constexpr std::pair<std::string, std::string> replacements[] = {
+    // NOTE: This array cannot be `constexpr` because `std::string` is not a literal type in C++20 so GCC will reject it
+    static const std::pair<std::string, std::string> replacements[] = {
         // Replace curly quotation marks with straight quotes
         {"\xE2\x80\x9C", "\""},  // U+201C left double quote
         {"\xE2\x80\x9D", "\""},  // U+201D right double quote
