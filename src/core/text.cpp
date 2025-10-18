@@ -88,19 +88,35 @@ void remove_unwanted_characters(std::string &text)
 
 std::size_t count_words(const std::string &text)
 {
-    std::size_t words = 0;
-    bool in_word = false;
-    for (const char c : text) {
-        const bool ws = (c == ' ' || c == '\n' || c == '\t' || c == '\r' || c == '\v' || c == '\f');
-        if (!ws && !in_word) {
-            in_word = true;
-            ++words;
+    std::size_t word_count = 0;
+
+    // Used for keeping track of whether we are currently inside a word
+    bool inside_word = false;
+
+    for (const char character : text) {
+
+        // Determine if the current character is a whitespace character
+        const bool is_whitespace = (character == ' ' ||
+                                    character == '\n' ||
+                                    character == '\t' ||
+                                    character == '\r' ||
+                                    character == '\v' ||
+                                    character == '\f');
+
+        // If the current character is not whitespace and we were previously outside a word, then we just found the first character of a new word
+        // We increment the word counter and mark that we are now inside a word
+        if (!is_whitespace && !inside_word) {
+            ++word_count;
+            inside_word = true;
         }
-        else if (ws) {
-            in_word = false;
+
+        // Otherwise, if the current character is whitespace, we mark that we are no longer inside a word
+        else if (is_whitespace) {
+            inside_word = false;
         }
     }
-    return words;
+
+    return word_count;
 }
 
 std::size_t count_characters(const std::string &text)
