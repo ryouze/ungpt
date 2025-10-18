@@ -123,7 +123,13 @@ void run()
             if (ImGui::BeginChild("##bottom", ImVec2(0, 0), ImGuiChildFlags_AutoResizeY, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
                 const std::size_t words = core::text::count_words(text);
                 const std::size_t chars = core::text::count_characters(text);
-                ImGui::Text("Words: %zu  Chars: %zu", words, chars);
+                const std::string status = std::format("Words: {}  Chars: {}", words, chars);
+
+                const float available_width = ImGui::GetContentRegionAvail().x;
+                const float text_width = ImGui::CalcTextSize(status.c_str()).x;
+                const float x = ImGui::GetCursorPosX() + std::max(0.0f, (available_width - text_width) * 0.5f);
+                ImGui::SetCursorPosX(x);
+                ImGui::TextUnformatted(status.c_str());
             }
             ImGui::EndChild();
 
@@ -132,14 +138,18 @@ void run()
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(12.0f, 12.0f));
             if (ImGui::BeginPopupModal("Shortcuts", &open_help_modal, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_AlwaysAutoResize)) {
 #if defined(__APPLE__)
-                const char *mod = "Cmd";
+                const std::string_view mod = "Cmd";
 #else
-                const char *mod = "Ctrl";
+                const std::string_view mod = "Ctrl";
 #endif
-                ImGui::Text("%s+V : Paste", mod);
-                ImGui::Text("%s+N : Normalize", mod);
-                ImGui::Text("%s+C : Copy", mod);
-                ImGui::Text("%s+L : Clear", mod);
+                const std::string l1 = std::format("{}+V : Paste", mod);
+                const std::string l2 = std::format("{}+N : Normalize", mod);
+                const std::string l3 = std::format("{}+C : Copy", mod);
+                const std::string l4 = std::format("{}+L : Clear", mod);
+                ImGui::TextUnformatted(l1.c_str());
+                ImGui::TextUnformatted(l2.c_str());
+                ImGui::TextUnformatted(l3.c_str());
+                ImGui::TextUnformatted(l4.c_str());
                 ImGui::EndPopup();
             }
             ImGui::PopStyleVar();
