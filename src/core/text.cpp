@@ -11,25 +11,6 @@
 
 namespace core::text {
 
-namespace {
-
-void replace_all_occurrences(std::string &str,
-                             const std::string &from,
-                             const std::string &to)
-{
-    if (from.empty()) {
-        return;
-    }
-
-    std::size_t pos = 0;
-    while ((pos = str.find(from, pos)) != std::string::npos) {
-        str.replace(pos, from.size(), to);
-        pos += to.size();
-    }
-}
-
-}  // namespace
-
 void remove_unwanted_characters(std::string &text)
 {
     constexpr std::pair<std::string, std::string> replacements[] = {
@@ -86,7 +67,22 @@ void remove_unwanted_characters(std::string &text)
     };
 
     for (const auto &[from, to] : replacements) {
-        replace_all_occurrences(text, from, to);
+
+        // Used for keeping track of where we are in the string as we perform replacements
+        std::size_t pos = 0;
+
+        // Continuously search the text for the next occurrence of the substring 'from', starting from the current position 'pos'
+        // Stop when no more matches are found
+        while ((pos = text.find(from, pos)) != std::string::npos) {
+
+            // Replace the found substring starting at 'pos' with the replacement string 'to'
+            // The number of characters replaced is equal to the size of the substring 'from'
+            text.replace(pos, from.size(), to);
+
+            // Move the search index forward by the length of the replacement text
+            // This ensures that the next call to `find()` starts after the part of the string we just modified
+            pos += to.size();
+        }
     }
 }
 
