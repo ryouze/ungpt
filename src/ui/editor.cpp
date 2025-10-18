@@ -185,7 +185,7 @@ float Editor::calculate_center_offset_for_labels(std::span<const std::string> la
 void Editor::update_and_draw_top_bar()
 {
     // Prepare a fixed list of button labels for toolbar actions
-    const std::array<std::string, 5> labels = {"Paste", "Normalize", "Copy", "Clear", "?"};
+    static const std::array<std::string, 5> labels = {"Paste", "Normalize", "Copy", "Clear", "?"};
 
     // Compute a horizontal offset that centers the toolbar buttons
     const float offset_x = this->calculate_center_offset_for_labels(std::span<const std::string>(labels.data(), labels.size()));
@@ -271,8 +271,8 @@ void Editor::update_and_draw_bottom_status() const
 void Editor::update_and_draw_shortcuts_modal()
 {
     // Lock the modal size to its content and prevent manual repositioning
-    constexpr ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize |
-                                       ImGuiWindowFlags_NoMove;
+    static constexpr ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize |
+                                              ImGuiWindowFlags_NoMove;
 
     // Query whether the popup is already open to avoid redundant open calls
     const bool popup_visible = ImGui::IsPopupOpen("Shortcuts", ImGuiPopupFlags_AnyPopupId);
@@ -305,9 +305,9 @@ void Editor::update_and_draw_shortcuts_modal()
         else {
             // If macOS, use the command key as modifier; otherwise, use control key
 #if defined(__APPLE__)
-            const std::string modifier = "Cmd";
+            static const std::string modifier = "Cmd";
 #else
-            const std::string modifier = "Ctrl";
+            static const std::string modifier = "Ctrl";
 #endif
             // Describe the paste shortcut using the detected modifier label
             const std::string line1 = std::format("{}+V : Paste", modifier);
