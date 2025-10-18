@@ -17,55 +17,55 @@ void remove_unwanted_characters(std::string &text)
     // NOTE: This array cannot be `constexpr` because `std::string` is not a literal type in C++20 so GCC will reject it
     static const std::pair<std::string, std::string> replacements[] = {
         // Replace curly quotation marks with straight quotes
-        {"\xE2\x80\x9C", "\""},  // U+201C left double quote
-        {"\xE2\x80\x9D", "\""},  // U+201D right double quote
-        {"\xE2\x80\x98", "'"},   // U+2018 left single quote
-        {"\xE2\x80\x99", "'"},   // U+2019 right single quote (apostrophe)
+        {"“", "\""},  // U+201C left double quote
+        {"”", "\""},  // U+201D right double quote
+        {"‘", "'"},   // U+2018 left single quote
+        {"’", "'"},   // U+2019 right single quote (apostrophe)
 
         // Replace dashes and hyphens with a standard ASCII hyphen-minus
-        {"\xE2\x80\x93", "-"},    // U+2013 en dash
-        {"\xE2\x80\x94", "-"},    // U+2014 em dash
-        {"\xE2\x80\x95", "-"},    // U+2015 horizontal bar
-        {"\xE2\x80\x90", "-"},    // U+2010 hard hyphen
-        {"\xE2\x80\x91", "-"},    // U+2011 non-breaking hyphen
-        {"\xE2\x80\x92", "-"},    // U+2012 figure dash
-        {"\xE2\x88\x92", "-"},    // U+2212 minus sign (math)
-        {"\xE2\x80\xA6", "..."},  // U+2026 ellipsis
+        {"–", "-"},    // U+2013 en dash
+        {"—", "-"},    // U+2014 em dash
+        {"―", "-"},    // U+2015 horizontal bar
+        {"‐", "-"},    // U+2010 hard hyphen
+        {"‑", "-"},    // U+2011 non-breaking hyphen
+        {"‒", "-"},    // U+2012 figure dash
+        {"−", "-"},    // U+2212 minus sign (math)
+        {"…", "..."},  // U+2026 ellipsis
 
         // Replace non-standard spaces with a normal ASCII space
-        {"\xC2\xA0", " "},      // U+00A0 non-breaking space
-        {"\xE2\x80\xAF", " "},  // U+202F narrow no-break space
-        {"\xE1\x9A\x80", " "},  // U+1680 Ogham space mark
-        {"\xE2\x80\x80", " "},  // U+2000 en quad
-        {"\xE2\x80\x81", " "},  // U+2001 em quad
-        {"\xE2\x80\x82", " "},  // U+2002 en space
-        {"\xE2\x80\x83", " "},  // U+2003 em space
-        {"\xE2\x80\x84", " "},  // U+2004 three-per-em space
-        {"\xE2\x80\x85", " "},  // U+2005 four-per-em space
-        {"\xE2\x80\x86", " "},  // U+2006 six-per-em space
-        {"\xE2\x80\x87", " "},  // U+2007 figure space
-        {"\xE2\x80\x88", " "},  // U+2008 punctuation space
-        {"\xE2\x80\x89", " "},  // U+2009 thin space
-        {"\xE2\x80\x8A", " "},  // U+200A hair space
-        {"\xE2\x81\x9F", " "},  // U+205F mathematical space
-        {"\xE3\x80\x80", " "},  // U+3000 ideographic space
+        {" ", " "},   // U+00A0 non-breaking space
+        {" ", " "},   // U+202F narrow no-break space
+        {" ", " "},   // U+1680 Ogham space mark
+        {" ", " "},   // U+2000 en quad
+        {" ", " "},   // U+2001 em quad
+        {" ", " "},   // U+2002 en space
+        {" ", " "},   // U+2003 em space
+        {" ", " "},   // U+2004 three-per-em space
+        {" ", " "},   // U+2005 four-per-em space
+        {" ", " "},   // U+2006 six-per-em space
+        {" ", " "},   // U+2007 figure space
+        {" ", " "},   // U+2008 punctuation space
+        {" ", " "},   // U+2009 thin space
+        {" ", " "},   // U+200A hair space
+        {" ", " "},   // U+205F mathematical space
+        {"　", " "},  // U+3000 ideographic space
 
         // Remove zero-width and other invisible characters entirely
-        {"\xE2\x80\x8B", ""},  // U+200B zero-width space
-        {"\xE2\x80\x8C", ""},  // U+200C zero-width non-joiner
-        {"\xE2\x80\x8D", ""},  // U+200D zero-width joiner
-        {"\xE2\x81\xA0", ""},  // U+2060 word joiner (zero-width no-break)
-        {"\xE2\x80\x8E", ""},  // U+200E left-to-right mark
-        {"\xE2\x80\x8F", ""},  // U+200F right-to-left mark
-        {"\xC2\xAD", ""},      // U+00AD soft hyphen (shy)
-        {"\xEF\xBB\xBF", ""},  // U+FEFF zero-width no-break (BOM)
+        {"​", ""},     // U+200B zero-width space
+        {"‌", ""},     // U+200C zero-width non-joiner
+        {"‍", ""},     // U+200D zero-width joiner
+        {"⁠", ""},     // U+2060 word joiner (zero-width no-break)
+        {"\u200E", ""},  // U+200E left-to-right mark
+        {"\u200F", ""},  // U+200F right-to-left mark
+        {"\xad", ""},    // U+00AD soft hyphen (shy)
+        {"\ufeff", ""},  // U+FEFF zero-width no-break (BOM)
 
         // Replace miscellaneous symbols with ASCII equivalents
-        {"\xC2\xB7", "*"},      // U+00B7 middle dot
-        {"\xE2\x80\xA2", "*"},  // U+2022 bullet
-        {"\xE2\x80\xA3", "*"},  // U+2023 triangular bullet
-        {"\xE2\x96\xAA", "*"},  // U+25AA small square bullet
-        {"\xE2\x8B\x85", "*"},  // U+22C5 dot operator
+        {"·", "*"},  // U+00B7 middle dot
+        {"•", "*"},  // U+2022 bullet
+        {"‣", "*"},  // U+2023 triangular bullet
+        {"▪", "*"},  // U+25AA small square bullet
+        {"⋅", "*"},  // U+22C5 dot operator
     };
 
     for (const auto &[from, to] : replacements) {
