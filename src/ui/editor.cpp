@@ -36,21 +36,30 @@ void Editor::on_event(const sf::Event &event)
             return;
         }
 
-        // TODO(ryouze): Add switch case or map here for better readability
-        if (key->code == sf::Keyboard::Key::V) {
-            this->text_ = core::clipboard::read_from_clipboard();
-        }
-        else if (key->code == sf::Keyboard::Key::N) {
-            core::text::remove_unwanted_characters(this->text_);
-        }
-        else if (key->code == sf::Keyboard::Key::C) {
-            core::clipboard::write_to_clipboard(this->text_);
-        }
-        else if (key->code == sf::Keyboard::Key::L) {
-            this->text_.clear();
-        }
-        else if (key->code == sf::Keyboard::Key::Slash) {
-            this->is_help_modal_open_ = true;
+        switch (key->code) {
+            case sf::Keyboard::Key::V: {
+                this->text_ = core::clipboard::read_from_clipboard();
+                break;
+            }
+            case sf::Keyboard::Key::N: {
+                core::text::remove_unwanted_characters(this->text_);
+                break;
+            }
+            case sf::Keyboard::Key::C: {
+                core::clipboard::write_to_clipboard(this->text_);
+                break;
+            }
+            case sf::Keyboard::Key::L: {
+                this->text_.clear();
+                break;
+            }
+            case sf::Keyboard::Key::Slash: {
+                this->is_help_modal_open_ = true;
+                break;
+            }
+            default: {
+                break;
+            }
         }
     }
 }
