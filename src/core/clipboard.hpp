@@ -1,7 +1,7 @@
 /**
  * @file clipboard.hpp
  *
- * @brief Read and write UTF-8 text from the system clipboard.
+ * @brief Read and write text from the system clipboard.
  */
 
 #pragma once
