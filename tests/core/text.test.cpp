@@ -19,6 +19,11 @@ TEST_CASE("remove_unwanted_characters replaces Unicode with ASCII", "[src][core]
         {"“Zażółć”—powiedział “gęślą”", "\"Zażółć\"-powiedział \"gęślą\""},
         {"“Grüße”—und “IA”… alles gut?", "\"Grüße\"-und \"IA\"... alles gut?"},
         {"﻿Agenda⁠plan", "Agendaplan"},  // Begins with a byte order mark and a word joiner
+        {"Grüße aus Berlin und Hamburg", "Grüße aus Berlin und Hamburg"},
+        {"Plan​⁠‍A", "PlanA"},
+        {"Aufgaben: • Erste ‣ Zweite · Dritte ⋅ Vierte ▪ Fünfte", "Aufgaben: * Erste * Zweite * Dritte * Vierte * Fünfte"},
+        {"Softer­hyphen bleibt weg", "Softerhyphen bleibt weg"},
+        {"Minus − gleich – Strich — Ende", "Minus - gleich - Strich - Ende"},
     };
 
     for (const auto &[input_text, expected_text] : test_cases) {
@@ -42,6 +47,12 @@ TEST_CASE("count_words returns correct word count", "[src][core][text.hpp]")
         {"Zażółć gęślą jaźń", 3},
         {"Quoted \"words\" stay one piece", 5},
         {"punctuation,does-not break again", 3},
+        {" \n\t\r", 0},
+        {"Zażółć   gęślą  \n jaźń", 3},
+        {"Grüße,\tBerlin!\nFreunde", 3},
+        {"Deutsch-polnische Zusammenarbeit", 2},
+        {"Emailadresse -Protokoll erneut", 3},
+        {"„Zażółć” gęślą jaźń.\n\n„Grüße“ überall!", 5},
     };
 
     for (const auto &[input_text, expected_count] : test_cases) {
@@ -60,6 +71,12 @@ TEST_CASE("count_characters returns correct character count", "[src][core][text.
         {"Zażółć", 6},
         {"emoji 😀", 7},
         {"​zero width mark", 16},  // Leading zero-width space should not count as a visible character
+        {"Zażółć gęślą jaźń", 17},
+        {"line\nbreak", 10},
+        {"👍🏻", 2},
+        {"👩‍💻", 3},
+        {"Ȧ", 2},
+        {"🇵🇱", 2},
     };
 
     for (const auto &[input_text, expected_count] : test_cases) {

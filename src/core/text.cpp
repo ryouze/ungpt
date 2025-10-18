@@ -55,10 +55,10 @@ void remove_unwanted_characters(std::string &text)
         {"‌", ""},     // U+200C zero-width non-joiner
         {"‍", ""},     // U+200D zero-width joiner
         {"⁠", ""},     // U+2060 word joiner (zero-width no-break)
-        {"\u200E", ""},  // U+200E left-to-right mark
-        {"\u200F", ""},  // U+200F right-to-left mark
-        {"\xad", ""},    // U+00AD soft hyphen (shy)
-        {"\ufeff", ""},  // U+FEFF zero-width no-break (BOM)
+        {"\u200E", ""},     // U+200E left-to-right mark
+        {"\u200F", ""},     // U+200F right-to-left mark
+        {"\u00AD", ""},     // U+00AD soft hyphen (shy)
+        {"\ufeff", ""},     // U+FEFF zero-width no-break (BOM)
 
         // Replace miscellaneous symbols with ASCII equivalents
         {"·", "*"},  // U+00B7 middle dot
