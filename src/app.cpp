@@ -74,8 +74,9 @@ void run()
         // Pass elapsed time to ImGui
         imgui_context.update(dt);
 
-        // Access ImGui IO for display size
+        // Access ImGui IO and style for theme-aware layout
         const ImGuiIO &io = ImGui::GetIO();
+        const ImGuiStyle &style = ImGui::GetStyle();
         // Lock the root window to the top-left corner every frame
         ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Always);
         // Make the root window fill the entire display area
@@ -92,7 +93,7 @@ void run()
                                                 ImGuiWindowFlags_NoNavFocus;
 
         // Reduce padding and rounding for the root window
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.0f, 8.0f));
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, style.WindowPadding);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 
@@ -105,8 +106,7 @@ void run()
                                   ImGuiWindowFlags_NoScrollbar |
                                       ImGuiWindowFlags_NoScrollWithMouse)) {
 
-                // Access style for measurements
-                const ImGuiStyle &style = ImGui::GetStyle();
+                // Use style metrics for consistent sizing
                 // Labels used by the toolbar buttons
                 constexpr std::array<const char *, 5> button_labels = {
                     "Paste",
@@ -172,7 +172,7 @@ void run()
             ImGui::EndChild();
 
             // Restore default padding for the main editor area
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.0f, 8.0f));
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, style.WindowPadding);
 
             // Reserve space for the statistics row at the bottom
             const float bottom_row_h = ImGui::GetTextLineHeightWithSpacing();
@@ -228,7 +228,7 @@ void run()
 
             // Display a quick reference modal for keyboard shortcuts
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding,
-                                ImVec2(12.0f, 12.0f));
+                                style.WindowPadding);
             if (ImGui::BeginPopupModal("Shortcuts",
                                        &is_help_modal_open,
                                        ImGuiWindowFlags_AlwaysAutoResize)) {
