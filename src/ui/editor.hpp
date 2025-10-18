@@ -45,7 +45,7 @@ class Editor {
      *
      * @return Offset in pixels relative to the current window origin.
      */
-    float calculate_center_offset_for_labels(std::span<const std::string> labels) const;
+    [[nodiscard]] float calculate_center_offset_for_labels(std::span<const std::string> labels) const;
 
     /**
      * @brief Draw the toolbar that provides clipboard and normalization actions.
