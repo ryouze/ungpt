@@ -22,6 +22,7 @@ namespace ui::editor {
 
 void Editor::on_event(const sf::Event &event)
 {
+    // TODO(ryouze): This does not work sometimes when text input is focused; investigate why
     // Check if the event is a key press
     if (const auto *key = event.getIf<sf::Event::KeyPressed>()) {
 
