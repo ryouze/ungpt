@@ -2,6 +2,9 @@
  * @file text.test.cpp
  */
 
+#include <string>       // for std::string
+#include <string_view>  // for std::string_view
+
 #include <snitch/snitch.hpp>
 
 #include "core/text.hpp"
