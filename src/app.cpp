@@ -36,11 +36,11 @@ void run()
 
     const auto on_update = [&](const float dt) {
         imgui_context.update(dt);
+        text_editor.update_and_draw();  // Won't be drawn until `imgui_context.render()` is called
     };
 
     const auto on_render = [&](sf::RenderWindow &rt) {
         rt.clear();
-        text_editor.draw();
         imgui_context.render();
         rt.display();
     };

@@ -55,7 +55,7 @@ void Editor::on_event(const sf::Event &event)
     }
 }
 
-void Editor::draw()
+void Editor::update_and_draw()
 {
     // Fetch the global ImGui IO state for display size queries
     const ImGuiIO &io = ImGui::GetIO();
@@ -91,7 +91,7 @@ void Editor::draw()
         // Begin a child window that holds the toolbar widgets
         if (ImGui::BeginChild("##topbar", ImVec2(0, 0), ImGuiChildFlags_AutoResizeY, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
             // Draw the toolbar contents into the child window
-            this->draw_top_bar();
+            this->update_and_draw_top_bar();
         }
 
         // Close the toolbar child window
@@ -109,7 +109,7 @@ void Editor::draw()
         // Begin the child window that hosts the text editor
         if (ImGui::BeginChild("##main", ImVec2(0, main_height), ImGuiChildFlags_None, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
             // Draw the multiline editor widget
-            this->draw_editor();
+            this->update_and_draw_editor();
         }
 
         // Close the main editor child window
@@ -121,20 +121,20 @@ void Editor::draw()
         // Begin the child window that hosts the bottom status bar
         if (ImGui::BeginChild("##bottom", ImVec2(0, 0), ImGuiChildFlags_AutoResizeY, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
             // Draw the live metrics into the status bar
-            this->draw_bottom_status();
+            this->update_and_draw_bottom_status();
         }
 
         // Close the status bar child window
         ImGui::EndChild();
 
         // Request the help modal to open when the flag is toggled
-        // TODO(ryouze): Move this logic to `draw_shortcuts_modal`
+        // TODO(ryouze): Move this logic to `update_and_draw_shortcuts_modal`
         if (this->is_help_modal_open_) {
             ImGui::OpenPopup("Shortcuts");
         }
 
         // Draw the modal even if not visible so state stays in sync
-        this->draw_shortcuts_modal();
+        this->update_and_draw_shortcuts_modal();
 
         // Update the help flag when the modal is no longer open
         if (!ImGui::IsPopupOpen("Shortcuts", ImGuiPopupFlags_AnyPopupId)) {
@@ -151,7 +151,7 @@ void Editor::draw()
     ImGui::PopStyleVar(3);
 }
 
-float Editor::compute_center_offset_for_labels(std::span<const std::string> labels) const
+float Editor::calculate_center_offset_for_labels(std::span<const std::string> labels) const
 {
     // Access the active style for padding and spacing metrics
     const ImGuiStyle &style = ImGui::GetStyle();
@@ -184,13 +184,13 @@ float Editor::compute_center_offset_for_labels(std::span<const std::string> labe
     return offset_x;
 }
 
-void Editor::draw_top_bar()
+void Editor::update_and_draw_top_bar()
 {
     // Prepare a fixed list of button labels for toolbar actions
     const std::array<std::string, 5> labels = {"Paste", "Normalize", "Copy", "Clear", "?"};
 
     // Compute a horizontal offset that centers the toolbar buttons
-    const float offset_x = this->compute_center_offset_for_labels(std::span<const std::string>(labels.data(), labels.size()));
+    const float offset_x = this->calculate_center_offset_for_labels(std::span<const std::string>(labels.data(), labels.size()));
 
     // Move the cursor so the buttons start centered within the region
     ImGui::SetCursorPosX(offset_x);
@@ -233,7 +233,7 @@ void Editor::draw_top_bar()
     }
 }
 
-void Editor::draw_editor()
+void Editor::update_and_draw_editor()
 {
     // Query the available size to grow the editor with the window
     const ImVec2 size = ImGui::GetContentRegionAvail();
@@ -243,7 +243,7 @@ void Editor::draw_editor()
 }
 
 // Define the routine that shows live text metrics
-void Editor::draw_bottom_status() const
+void Editor::update_and_draw_bottom_status() const
 {
     // Count the number of words within the current text
     const std::size_t word_count = core::text::count_words(this->text_);
@@ -270,7 +270,7 @@ void Editor::draw_bottom_status() const
     ImGui::TextUnformatted(status.c_str());
 }
 
-void Editor::draw_shortcuts_modal() const
+void Editor::update_and_draw_shortcuts_modal() const
 {
     // Preserve the modal size so it envelopes the content tightly
     constexpr ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;

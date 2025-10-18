@@ -35,7 +35,7 @@ class Editor {
      *
      * The method restores layout hints, draws the toolbar and editor, updates the status bar, and opens the shortcuts modal when required.
      */
-    void draw();
+    void update_and_draw();
 
   private:
     /**
@@ -45,27 +45,27 @@ class Editor {
      *
      * @return Offset in pixels relative to the current window origin.
      */
-    float compute_center_offset_for_labels(std::span<const std::string> labels) const;
+    float calculate_center_offset_for_labels(std::span<const std::string> labels) const;
 
     /**
      * @brief Draw the toolbar that provides clipboard and normalization actions.
      */
-    void draw_top_bar();
+    void update_and_draw_top_bar();
 
     /**
      * @brief Render the multiline editor and handle caret focus.
      */
-    void draw_editor();
+    void update_and_draw_editor();
 
     /**
      * @brief Update and render the bottom status line.
      */
-    void draw_bottom_status() const;
+    void update_and_draw_bottom_status() const;
 
     /**
      * @brief Render the shortcuts modal if it has been requested.
      */
-    void draw_shortcuts_modal() const;
+    void update_and_draw_shortcuts_modal() const;
 
     /**
      * @brief Text displayed inside the editor widget.
