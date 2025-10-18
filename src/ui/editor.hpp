@@ -63,7 +63,7 @@ class Editor {
     void update_and_draw_bottom_status() const;
 
     /**
-     * @brief Render the shortcuts modal and reset the toggle when closed.
+     * @brief Render the shortcuts modal and close it on toggle or outside click.
      */
     void update_and_draw_shortcuts_modal();
 

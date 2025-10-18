@@ -37,29 +37,29 @@ void Editor::on_event(const sf::Event &event)
         }
 
         switch (key->code) {
-            case sf::Keyboard::Key::V: {
-                this->text_ = core::clipboard::read_from_clipboard();
-                break;
-            }
-            case sf::Keyboard::Key::N: {
-                core::text::remove_unwanted_characters(this->text_);
-                break;
-            }
-            case sf::Keyboard::Key::C: {
-                core::clipboard::write_to_clipboard(this->text_);
-                break;
-            }
-            case sf::Keyboard::Key::L: {
-                this->text_.clear();
-                break;
-            }
-            case sf::Keyboard::Key::Slash: {
-                this->is_help_modal_open_ = true;
-                break;
-            }
-            default: {
-                break;
-            }
+        case sf::Keyboard::Key::V: {
+            this->text_ = core::clipboard::read_from_clipboard();
+            break;
+        }
+        case sf::Keyboard::Key::N: {
+            core::text::remove_unwanted_characters(this->text_);
+            break;
+        }
+        case sf::Keyboard::Key::C: {
+            core::clipboard::write_to_clipboard(this->text_);
+            break;
+        }
+        case sf::Keyboard::Key::L: {
+            this->text_.clear();
+            break;
+        }
+        case sf::Keyboard::Key::Slash: {
+            this->is_help_modal_open_ = !this->is_help_modal_open_;
+            break;
+        }
+        default: {
+            break;
+        }
         }
     }
 }
@@ -270,61 +270,84 @@ void Editor::update_and_draw_bottom_status() const
 
 void Editor::update_and_draw_shortcuts_modal()
 {
-    // Preserve the modal size so it envelopes the content tightly
-    constexpr ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;
+    // Lock the modal size to its content and prevent manual repositioning
+    constexpr ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize |
+                                       ImGuiWindowFlags_NoMove;
 
-    // Request the help modal to open when the flag is toggled
-    if (this->is_help_modal_open_) {
+    // Query whether the popup is already open to avoid redundant open calls
+    const bool popup_visible = ImGui::IsPopupOpen("Shortcuts", ImGuiPopupFlags_AnyPopupId);
+
+    // Open the popup only when the UI requested it and it is currently closed
+    if (this->is_help_modal_open_ && !popup_visible) {
         ImGui::OpenPopup("Shortcuts");
     }
 
-    // If macOS, use the command key as modifier; otherwise, use control key
+    // Fetch the active viewport so the popup can be aligned to its center
+    const ImGuiViewport *viewport = ImGui::GetMainViewport();
+
+    // Compute the target center position or fall back to the origin when missing
+    const ImVec2 viewport_center = viewport != nullptr ? viewport->GetCenter() : ImVec2(0.0f, 0.0f);
+
+    // Force the modal to appear centered relative to the viewport
+    ImGui::SetNextWindowPos(viewport_center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+    // Begin the modal popup and populate it when the window becomes visible
     if (ImGui::BeginPopupModal("Shortcuts", nullptr, flags)) {
+        // Detect whether the user clicked outside the popup to dismiss it
+        const bool clicked_outside = ImGui::IsMouseClicked(ImGuiMouseButton_Left) &&
+                                     !ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow);
+
+        // Close the popup when the toggle was cleared or an outside click occurred
+        if (!this->is_help_modal_open_ || clicked_outside) {
+            this->is_help_modal_open_ = false;
+            ImGui::CloseCurrentPopup();
+        }
+        else {
+            // If macOS, use the command key as modifier; otherwise, use control key
 #if defined(__APPLE__)
-        const std::string modifier = "Cmd";
+            const std::string modifier = "Cmd";
 #else
-        const std::string modifier = "Ctrl";
+            const std::string modifier = "Ctrl";
 #endif
-        // Describe the paste shortcut using the detected modifier label
-        const std::string line1 = std::format("{}+V : Paste", modifier);
+            // Describe the paste shortcut using the detected modifier label
+            const std::string line1 = std::format("{}+V : Paste", modifier);
 
-        // Describe the normalize shortcut using the detected modifier label
-        const std::string line2 = std::format("{}+N : Normalize", modifier);
+            // Describe the normalize shortcut using the detected modifier label
+            const std::string line2 = std::format("{}+N : Normalize", modifier);
 
-        // Describe the copy shortcut using the detected modifier label
-        const std::string line3 = std::format("{}+C : Copy", modifier);
+            // Describe the copy shortcut using the detected modifier label
+            const std::string line3 = std::format("{}+C : Copy", modifier);
 
-        // Describe the clear shortcut using the detected modifier label
-        const std::string line4 = std::format("{}+L : Clear", modifier);
+            // Describe the clear shortcut using the detected modifier label
+            const std::string line4 = std::format("{}+L : Clear", modifier);
 
-        // Describe the help shortcut using the detected modifier label
-        const std::string line5 = std::format("{}+/ : Open this help", modifier);
+            // Describe the help shortcut using the detected modifier label
+            const std::string line5 = std::format("{}+/ : Open this help", modifier);
 
-        // Render the paste shortcut text
-        ImGui::TextUnformatted(line1.c_str());
+            // Render the paste shortcut text
+            ImGui::TextUnformatted(line1.c_str());
 
-        // Render the normalize shortcut text
-        ImGui::TextUnformatted(line2.c_str());
+            // Render the normalize shortcut text
+            ImGui::TextUnformatted(line2.c_str());
 
-        // Render the copy shortcut text
-        ImGui::TextUnformatted(line3.c_str());
+            // Render the copy shortcut text
+            ImGui::TextUnformatted(line3.c_str());
 
-        // Render the clear shortcut text
-        ImGui::TextUnformatted(line4.c_str());
+            // Render the clear shortcut text
+            ImGui::TextUnformatted(line4.c_str());
 
-        // Draw a separator to isolate the final entry
-        ImGui::Separator();
+            // Draw a separator to isolate the final entry
+            ImGui::Separator();
 
-        // Render the help shortcut text
-        ImGui::TextUnformatted(line5.c_str());
-
-        // Do not render a close button; modal has a button in the top right corner
+            // Render the help shortcut text
+            ImGui::TextUnformatted(line5.c_str());
+        }
 
         // End the popup modal after populating all widgets
         ImGui::EndPopup();
     }
 
-    // Update the help flag when the modal is no longer open
+    // Clear the open flag when the popup is no longer present
     if (!ImGui::IsPopupOpen("Shortcuts", ImGuiPopupFlags_AnyPopupId)) {
         this->is_help_modal_open_ = false;
     }
