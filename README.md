@@ -4,7 +4,7 @@
 [![Release](https://github.com/ryouze/ungpt/actions/workflows/release.yml/badge.svg)](https://github.com/ryouze/ungpt/actions/workflows/release.yml)
 ![Release version](https://img.shields.io/github/v/release/ryouze/ungpt)
 
-ungpt is a cross-platform GUI app for replacing ChatGPT's formatting artifacts (e.g. em dashes, curly quotes, smart punctuation) with plain standardized characters.
+ungpt is a cross-platform GUI app that converts ChatGPT's smart punctuation and symbols to plain ASCII.
 
 
 ## Motivation
