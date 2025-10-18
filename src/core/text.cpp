@@ -32,15 +32,16 @@ void replace_all_occurrences(std::string &str,
 
 void remove_unwanted_characters(std::string &text)
 {
-    replace_all_occurrences(text, std::string("\xE2\x80\x9C"), "\"");
-    replace_all_occurrences(text, std::string("\xE2\x80\x9D"), "\"");
-    replace_all_occurrences(text, std::string("\xE2\x80\x98"), "'");
-    replace_all_occurrences(text, std::string("\xE2\x80\x99"), "'");
-    replace_all_occurrences(text, std::string("\xE2\x80\x93"), "-");
-    replace_all_occurrences(text, std::string("\xE2\x80\x94"), "-");
-    replace_all_occurrences(text, std::string("\xE2\x80\xA6"), "...");
-    replace_all_occurrences(text, std::string("\xC2\xA0"), " ");
-    replace_all_occurrences(text, std::string("\xE2\x80\x8B"), "");
+    // Single quotes
+    replace_all_occurrences(text, "‘", "'");
+    replace_all_occurrences(text, "’", "'");
+    // Double quotes
+    replace_all_occurrences(text, "“", "\"");
+    replace_all_occurrences(text, "”", "\"");
+    // Dashes
+    replace_all_occurrences(text, "—", "-");
+    // Dots
+    replace_all_occurrences(text, "…", "...");
 }
 
 std::size_t count_words(const std::string &text)
