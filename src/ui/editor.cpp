@@ -22,6 +22,7 @@ namespace ui::editor {
 
 void Editor::on_event(const sf::Event &event)
 {
+    return;
     // TODO(ryouze): This does not work sometimes when text input is focused; investigate why
     // Check if the event is a key press
     if (const auto *key = event.getIf<sf::Event::KeyPressed>()) {
@@ -38,18 +39,19 @@ void Editor::on_event(const sf::Event &event)
         }
 
         switch (key->code) {
-        case sf::Keyboard::Key::V: {
-            this->text_ = core::clipboard::read_from_clipboard();
-            break;
-        }
+        // No need to handle raw shortcuts, they work automatically with ImGui text input
+        // case sf::Keyboard::Key::V: {
+        //     this->text_ = core::clipboard::read_from_clipboard();
+        //     break;
+        // }
         case sf::Keyboard::Key::N: {
             core::text::remove_unwanted_characters(this->text_);
             break;
         }
-        case sf::Keyboard::Key::C: {
-            core::clipboard::write_to_clipboard(this->text_);
-            break;
-        }
+        // case sf::Keyboard::Key::C: {
+        //     core::clipboard::write_to_clipboard(this->text_);
+        //     break;
+        // }
         case sf::Keyboard::Key::L: {
             this->text_.clear();
             break;
