@@ -21,14 +21,6 @@ namespace ui::editor {
  */
 class Editor {
   public:
-    /**
-     * @brief Handle one SFML event emitted by the main loop.
-     *
-     * The method checks platform modifier state and dispatches registered shortcuts that affect the editor text or the help modal.
-     *
-     * @param event SFML event forwarded by the application.
-     */
-    void on_event(const sf::Event &event);
 
     /**
      * @brief Submit all ImGui widgets for the current frame.

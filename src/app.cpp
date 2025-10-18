@@ -29,9 +29,6 @@ void run()
         if (event.is<sf::Event::Closed>()) [[unlikely]] {
             window.raw().close();
         }
-
-        // Process keyboard shortcuts
-        text_editor.on_event(event);
     };
 
     const auto on_update = [&](const float dt) {

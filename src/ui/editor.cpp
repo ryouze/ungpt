@@ -20,53 +20,6 @@
 
 namespace ui::editor {
 
-void Editor::on_event(const sf::Event &event)
-{
-    return;
-    // TODO(ryouze): This does not work sometimes when text input is focused; investigate why
-    // Check if the event is a key press
-    if (const auto *key = event.getIf<sf::Event::KeyPressed>()) {
-
-        // If macOS, use the command key as modifier; otherwise, use control key
-#if defined(__APPLE__)
-        const bool modifier_down = key->system;
-#else
-        const bool modifier_down = key->control;
-#endif
-        // If the modifier key is not held down, skip shortcut processing
-        if (!modifier_down) {
-            return;
-        }
-
-        switch (key->code) {
-        // No need to handle raw shortcuts, they work automatically with ImGui text input
-        // case sf::Keyboard::Key::V: {
-        //     this->text_ = core::clipboard::read_from_clipboard();
-        //     break;
-        // }
-        case sf::Keyboard::Key::N: {
-            core::text::remove_unwanted_characters(this->text_);
-            break;
-        }
-        // case sf::Keyboard::Key::C: {
-        //     core::clipboard::write_to_clipboard(this->text_);
-        //     break;
-        // }
-        case sf::Keyboard::Key::L: {
-            this->text_.clear();
-            break;
-        }
-        case sf::Keyboard::Key::Slash: {
-            this->is_help_modal_open_ = !this->is_help_modal_open_;
-            break;
-        }
-        default: {
-            break;
-        }
-        }
-    }
-}
-
 void Editor::update_and_draw()
 {
     // Fetch the global ImGui IO state for display size queries
@@ -315,35 +268,35 @@ void Editor::update_and_draw_shortcuts_modal()
             // Describe the paste shortcut using the detected modifier label
             const std::string line1 = std::format("{}+V : Paste", modifier);
 
-            // Describe the normalize shortcut using the detected modifier label
-            const std::string line2 = std::format("{}+N : Normalize", modifier);
+            // // Describe the normalize shortcut using the detected modifier label
+            // const std::string line2 = std::format("{}+N : Normalize", modifier);
 
             // Describe the copy shortcut using the detected modifier label
             const std::string line3 = std::format("{}+C : Copy", modifier);
 
-            // Describe the clear shortcut using the detected modifier label
-            const std::string line4 = std::format("{}+L : Clear", modifier);
+            // // Describe the clear shortcut using the detected modifier label
+            // const std::string line4 = std::format("{}+L : Clear", modifier);
 
-            // Describe the help shortcut using the detected modifier label
-            const std::string line5 = std::format("{}+/ : Open this help", modifier);
+            // // Describe the help shortcut using the detected modifier label
+            // const std::string line5 = std::format("{}+/ : Open this help", modifier);
 
             // Render the paste shortcut text
             ImGui::TextUnformatted(line1.c_str());
 
             // Render the normalize shortcut text
-            ImGui::TextUnformatted(line2.c_str());
+            // ImGui::TextUnformatted(line2.c_str());
 
             // Render the copy shortcut text
             ImGui::TextUnformatted(line3.c_str());
 
             // Render the clear shortcut text
-            ImGui::TextUnformatted(line4.c_str());
+            // ImGui::TextUnformatted(line4.c_str());
 
             // Draw a separator to isolate the final entry
-            ImGui::Separator();
+            // ImGui::Separator();
 
             // Render the help shortcut text
-            ImGui::TextUnformatted(line5.c_str());
+            // ImGui::TextUnformatted(line5.c_str());
         }
 
         // End the popup modal after populating all widgets
