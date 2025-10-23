@@ -39,7 +39,7 @@ Window::Window()
     this->window_.create(mode, window_title, sf::State::Windowed, settings);
 
     // Set minimum size (only relevant for windowed mode)
-    this->window_.setMinimumSize(sf::Vector2u{350, 200});
+    this->window_.setMinimumSize(sf::Vector2u{400, 200});
 
     // Enable vsync (remember: you cannot use both FPS limit and vsync at the same time)
     this->window_.setVerticalSyncEnabled(true);
