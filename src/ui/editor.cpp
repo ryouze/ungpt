@@ -244,8 +244,8 @@ void Editor::update_and_draw_usage_modal()
     // Compute the target center position or fall back to the origin when missing
     const ImVec2 viewport_center = viewport != nullptr ? viewport->GetCenter() : ImVec2(0.0f, 0.0f);
 
-    // Force the modal to appear centered relative to the viewport
-    ImGui::SetNextWindowPos(viewport_center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+    // Force the modal to stay centered relative to the viewport
+    ImGui::SetNextWindowPos(viewport_center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 
     // Begin the modal popup and populate it when the window becomes visible
     if (ImGui::BeginPopupModal("Usage", nullptr, flags)) {
