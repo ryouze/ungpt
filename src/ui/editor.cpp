@@ -251,7 +251,7 @@ void Editor::update_and_draw_shortcuts_modal()
     if (ImGui::BeginPopupModal("Shortcuts", nullptr, flags)) {
         // Detect whether the user clicked outside the popup to dismiss it
         const bool clicked_outside = ImGui::IsMouseClicked(ImGuiMouseButton_Left) &&
-                                     !ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow);
+                                     !ImGui::IsWindowHovered();
 
         // Close the popup when the toggle was cleared or an outside click occurred
         if (!this->is_help_modal_open_ || clicked_outside) {
@@ -259,44 +259,10 @@ void Editor::update_and_draw_shortcuts_modal()
             ImGui::CloseCurrentPopup();
         }
         else {
-            // If macOS, use the command key as modifier; otherwise, use control key
-#if defined(__APPLE__)
-            static const std::string modifier = "Cmd";
-#else
-            static const std::string modifier = "Ctrl";
-#endif
-            // Describe the paste shortcut using the detected modifier label
-            const std::string line1 = std::format("{}+V : Paste", modifier);
-
-            // // Describe the normalize shortcut using the detected modifier label
-            // const std::string line2 = std::format("{}+N : Normalize", modifier);
-
-            // Describe the copy shortcut using the detected modifier label
-            const std::string line3 = std::format("{}+C : Copy", modifier);
-
-            // // Describe the clear shortcut using the detected modifier label
-            // const std::string line4 = std::format("{}+L : Clear", modifier);
-
-            // // Describe the help shortcut using the detected modifier label
-            // const std::string line5 = std::format("{}+/ : Open this help", modifier);
-
-            // Render the paste shortcut text
-            ImGui::TextUnformatted(line1.c_str());
-
-            // Render the normalize shortcut text
-            // ImGui::TextUnformatted(line2.c_str());
-
-            // Render the copy shortcut text
-            ImGui::TextUnformatted(line3.c_str());
-
-            // Render the clear shortcut text
-            // ImGui::TextUnformatted(line4.c_str());
-
-            // Draw a separator to isolate the final entry
-            // ImGui::Separator();
-
-            // Render the help shortcut text
-            // ImGui::TextUnformatted(line5.c_str());
+            ImGui::TextUnformatted("1. Copy text from ChatGPT or another language model.");
+            ImGui::TextUnformatted("2. Click Paste to insert the text into the input field from your clipboard.");
+            ImGui::TextUnformatted("3. Click Normalize to modify the text in place.");
+            ImGui::TextUnformatted("4. Click Copy to copy the normalized text to your clipboard.");
         }
 
         // End the popup modal after populating all widgets
