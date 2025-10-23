@@ -126,12 +126,9 @@ On macOS, this will install the program to `/Applications`. You can then run `un
 
 ## Usage
 
-1. Click **Paste** to load the text from your clipboard into the input field.
+1. Click **Paste** to load text from the clipboard.
 2. Click **Normalize** to modify the text in place.
-3. Click **Copy** to write the normalized text to your clipboard.
-
-> [!TIP]
-> You do not need to select the text area manually. You can use the buttons directly; the text area is only for viewing or optional editing.
+3. Click **Copy** to write the text to the clipboard.
 
 
 ## Development
