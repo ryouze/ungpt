@@ -25,7 +25,7 @@ class Editor {
     /**
      * @brief Submit all ImGui widgets for the current frame.
      *
-     * The method restores layout hints, draws the toolbar and editor, updates the status bar, and opens the shortcuts modal when required.
+     * The method restores layout hints, draws the toolbar and editor, updates the status bar, and opens the usage modal when required.
      */
     void update_and_draw();
 
@@ -55,9 +55,9 @@ class Editor {
     void update_and_draw_bottom_status() const;
 
     /**
-     * @brief Render the shortcuts modal and close it on toggle or outside click.
+     * @brief Render the usage modal and close it on toggle or outside click.
      */
-    void update_and_draw_shortcuts_modal();
+    void update_and_draw_usage_modal();
 
     /**
      * @brief Text displayed inside the editor widget.
@@ -65,7 +65,7 @@ class Editor {
     std::string text_;
 
     /**
-     * @brief Track whether the shortcuts modal should be visible.
+     * @brief Track whether the usage modal should be visible.
      */
     bool is_help_modal_open_ = false;
 };

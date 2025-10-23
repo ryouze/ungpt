@@ -93,7 +93,7 @@ void Editor::update_and_draw()
         ImGui::EndChild();
 
         // Draw the modal even if not visible so state stays in sync
-        this->update_and_draw_shortcuts_modal();
+        this->update_and_draw_usage_modal();
 
         // Finish populating the root window contents
     }
@@ -181,7 +181,7 @@ void Editor::update_and_draw_top_bar()
     // Keep the help button on the same row
     ImGui::SameLine();
 
-    // Render the help button that opens the shortcuts modal
+    // Render the help button that opens the usage modal
     if (ImGui::Button(labels[4].c_str())) {
         this->is_help_modal_open_ = true;
     }
@@ -224,18 +224,18 @@ void Editor::update_and_draw_bottom_status() const
     ImGui::TextUnformatted(status.c_str());
 }
 
-void Editor::update_and_draw_shortcuts_modal()
+void Editor::update_and_draw_usage_modal()
 {
     // Lock the modal size to its content and prevent manual repositioning
     static constexpr ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize |
                                               ImGuiWindowFlags_NoMove;
 
     // Query whether the popup is already open to avoid redundant open calls
-    const bool popup_visible = ImGui::IsPopupOpen("Shortcuts", ImGuiPopupFlags_AnyPopupId);
+    const bool popup_visible = ImGui::IsPopupOpen("Usage", ImGuiPopupFlags_AnyPopupId);
 
     // Open the popup only when the UI requested it and it is currently closed
     if (this->is_help_modal_open_ && !popup_visible) {
-        ImGui::OpenPopup("Shortcuts");
+        ImGui::OpenPopup("Usage");
     }
 
     // Fetch the active viewport so the popup can be aligned to its center
@@ -248,7 +248,7 @@ void Editor::update_and_draw_shortcuts_modal()
     ImGui::SetNextWindowPos(viewport_center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 
     // Begin the modal popup and populate it when the window becomes visible
-    if (ImGui::BeginPopupModal("Shortcuts", nullptr, flags)) {
+    if (ImGui::BeginPopupModal("Usage", nullptr, flags)) {
         // Detect whether the user clicked outside the popup to dismiss it
         const bool clicked_outside = ImGui::IsMouseClicked(ImGuiMouseButton_Left) &&
                                      !ImGui::IsWindowHovered();
@@ -259,10 +259,9 @@ void Editor::update_and_draw_shortcuts_modal()
             ImGui::CloseCurrentPopup();
         }
         else {
-            ImGui::TextUnformatted("1. Copy text from ChatGPT or another language model.");
-            ImGui::TextUnformatted("2. Click Paste to insert the text into the input field from your clipboard.");
-            ImGui::TextUnformatted("3. Click Normalize to modify the text in place.");
-            ImGui::TextUnformatted("4. Click Copy to copy the normalized text to your clipboard.");
+            ImGui::TextUnformatted("1. Click Paste to load text from the clipboard.");
+            ImGui::TextUnformatted("2. Click Normalize to modify the text in place.");
+            ImGui::TextUnformatted("3. Click Copy to write the text to the clipboard.");
         }
 
         // End the popup modal after populating all widgets
@@ -270,7 +269,7 @@ void Editor::update_and_draw_shortcuts_modal()
     }
 
     // Clear the open flag when the popup is no longer present
-    if (!ImGui::IsPopupOpen("Shortcuts", ImGuiPopupFlags_AnyPopupId)) {
+    if (!ImGui::IsPopupOpen("Usage", ImGuiPopupFlags_AnyPopupId)) {
         this->is_help_modal_open_ = false;
     }
 }
