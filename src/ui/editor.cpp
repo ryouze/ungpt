@@ -11,8 +11,6 @@
 
 #include <imgui.h>
 #include <misc/cpp/imgui_stdlib.h>  // for std::string with InputText
-#include <SFML/Window/Event.hpp>
-#include <SFML/Window/Keyboard.hpp>
 #include <spdlog/spdlog.h>
 
 #include "core/clipboard.hpp"
