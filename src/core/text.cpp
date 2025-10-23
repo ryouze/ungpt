@@ -6,7 +6,8 @@
 #include <string>   // for std::string
 #include <utility>  // for std::pair
 
-#include "SFML/System/Utf.hpp"
+#include <SFML/System/Utf.hpp>
+#include <spdlog/spdlog.h>
 
 #include "core/text.hpp"
 
@@ -55,10 +56,10 @@ void remove_unwanted_characters(std::string &text)
         {"‌", ""},     // U+200C zero-width non-joiner
         {"‍", ""},     // U+200D zero-width joiner
         {"⁠", ""},     // U+2060 word joiner (zero-width no-break)
-        {"\u200E", ""},     // U+200E left-to-right mark
-        {"\u200F", ""},     // U+200F right-to-left mark
-        {"\u00AD", ""},     // U+00AD soft hyphen (shy)
-        {"\ufeff", ""},     // U+FEFF zero-width no-break (BOM)
+        {"\u200E", ""},  // U+200E left-to-right mark
+        {"\u200F", ""},  // U+200F right-to-left mark
+        {"\u00AD", ""},  // U+00AD soft hyphen (shy)
+        {"\ufeff", ""},  // U+FEFF zero-width no-break (BOM)
 
         // Replace miscellaneous symbols with ASCII equivalents
         {"·", "*"},  // U+00B7 middle dot
@@ -84,8 +85,12 @@ void remove_unwanted_characters(std::string &text)
             // Move the search index forward by the length of the replacement text
             // This ensures that the next call to `find()` starts after the part of the string we just modified
             pos += to.size();
+
+            SPDLOG_INFO("Replaced '{}' with '{}' at position {}", from, to, pos);
         }
     }
+
+    SPDLOG_DEBUG("Normalized text, resulting length: {}", text.size());
 }
 
 std::size_t count_words(const std::string &text)
