@@ -13,6 +13,7 @@
 #include <misc/cpp/imgui_stdlib.h>  // for std::string with InputText
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
+#include <spdlog/spdlog.h>
 
 #include "core/clipboard.hpp"
 #include "core/text.hpp"
@@ -151,6 +152,7 @@ void Editor::update_and_draw_top_bar()
 
     // Render the paste button that pulls text from the clipboard helper
     if (ImGui::Button(labels[0].c_str())) {
+        SPDLOG_DEBUG("Paste button was pressed");
         this->text_ = core::clipboard::read_from_clipboard();
     }
 
@@ -159,6 +161,7 @@ void Editor::update_and_draw_top_bar()
 
     // Render the normalize button that cleans up smart punctuation via core::text
     if (ImGui::Button(labels[1].c_str())) {
+        SPDLOG_DEBUG("Normalize button was pressed");
         core::text::remove_unwanted_characters(this->text_);
     }
 
@@ -167,6 +170,7 @@ void Editor::update_and_draw_top_bar()
 
     // Render the copy button that pushes text to the clipboard helper
     if (ImGui::Button(labels[2].c_str())) {
+        SPDLOG_DEBUG("Copy button was pressed");
         core::clipboard::write_to_clipboard(this->text_);
     }
 
@@ -175,6 +179,7 @@ void Editor::update_and_draw_top_bar()
 
     // Render the clear button that empties the editor text
     if (ImGui::Button(labels[3].c_str())) {
+        SPDLOG_DEBUG("Clear button was pressed");
         this->text_.clear();
     }
 
@@ -183,6 +188,7 @@ void Editor::update_and_draw_top_bar()
 
     // Render the help button that opens the usage modal
     if (ImGui::Button(labels[4].c_str())) {
+        SPDLOG_DEBUG("Help button was pressed");
         this->is_help_modal_open_ = true;
     }
 }
