@@ -126,13 +126,12 @@ On macOS, this will install the program to `/Applications`. You can then run `un
 
 ## Usage
 
-1. Copy text from ChatGPT or another language model.
-2. Click **Paste** to insert the text into the input field.
-3. Click **Normalize** to modify the text **in place**.
-4. Click **Copy** to copy the normalized text to your clipboard.
+1. Click **Paste** to load the text from your clipboard into the input field.
+2. Click **Normalize** to modify the text in place.
+3. Click **Copy** to write the normalized text to your clipboard.
 
 > [!TIP]
-> You do not need to manually select the text area to use the buttons. The text area is only for displaying or optionally editing the text.
+> You do not need to select the text area manually. You can use the buttons directly; the text area is only for viewing or optional editing.
 
 
 ## Development
