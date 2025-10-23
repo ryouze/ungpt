@@ -86,7 +86,7 @@ void remove_unwanted_characters(std::string &text)
             // This ensures that the next call to `find()` starts after the part of the string we just modified
             pos += to.size();
 
-            SPDLOG_INFO("Replaced '{}' with '{}' at position {}", from, to, pos);
+            SPDLOG_DEBUG("Replaced '{}' with '{}' at position {}", from, to, pos);
         }
     }
 
