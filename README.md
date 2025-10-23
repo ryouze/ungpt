@@ -9,7 +9,9 @@ ungpt is a cross-platform GUI app that converts ChatGPT's smart punctuation and 
 
 ## Motivation
 
-Large Language Models (LLMs) often produce text containing "smart" punctuation and typographic Unicode symbols, such as:
+I often use ChatGPT to correct grammar and spelling errors. It's smarter than a regular spell checker.
+
+However, it often produces text containing "smart" punctuation and typographic Unicode symbols, such as:
 
 * Em dashes (`—`) instead of ASCII dashes (`-`)
 * Curly quotes (`“ ” ‘ ’`) instead of straight quotes (`" '`)
@@ -124,7 +126,13 @@ On macOS, this will install the program to `/Applications`. You can then run `un
 
 ## Usage
 
-*TBA.*
+1. Copy text from ChatGPT or another language model.
+2. Click **Paste** to insert the text into the input field.
+3. Click **Normalize** to modify the text **in place**.
+4. Click **Copy** to copy the normalized text to your clipboard.
+
+> [!TIP]
+> You do not need to manually select the text area to use the buttons. The text area is only for displaying or optionally editing the text.
 
 
 ## Development
@@ -180,9 +188,9 @@ ctest --verbose
 
 **Libraries:**
 - [Simple and Fast Multimedia Library](https://github.com/SFML/SFML) - Windowing, graphics, input, etc.
-- [Dear ImGui](https://github.com/ocornut/imgui) - Immediate‑mode GUI.
-- [ImGui‑SFML](https://github.com/SFML/imgui-sfml) - ImGui-to-SFML binding.
-- [snitch](https://github.com/snitch-org/snitch) - Unit‑testing framework.
+- [Dear ImGui](https://github.com/ocornut/imgui) - Immediate-mode GUI.
+- [ImGui-SFML](https://github.com/SFML/imgui-sfml) - ImGui-to-SFML binding.
+- [snitch](https://github.com/snitch-org/snitch) - Unit-testing framework.
 - [spdlog](https://github.com/gabime/spdlog) - Logging library.
 
 **Graphics:**
