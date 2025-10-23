@@ -1,7 +1,7 @@
 /**
  * @file text.hpp
  *
- * @brief Process and analyze text.
+ * @brief Text cleanup and counters.
  */
 
 #pragma once

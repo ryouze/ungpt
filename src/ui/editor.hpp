@@ -1,7 +1,7 @@
 /**
  * @file editor.hpp
  *
- * @brief Declares the ungpt ImGui editor module.
+ * @brief Actual ImGui-based GUI interface.
  */
 
 #pragma once
