@@ -19,7 +19,7 @@ std::string read_from_clipboard()
     const sf::U8String utf8 = sf::Clipboard::getString().toUtf8();
     const std::string result = {utf8.cbegin(), utf8.cend()};
 
-    SPDLOG_DEBUG("Read '{}' characters from clipboard: '{}'", result.size(), result);
+    SPDLOG_DEBUG("Read '{}' characters from clipboard", result.size());
 
     return result;
 }
@@ -30,7 +30,7 @@ void write_to_clipboard(const std::string &text)
     const sf::String utf32 = sf::String::fromUtf8(text.cbegin(), text.cend());
     sf::Clipboard::setString(utf32);
 
-    SPDLOG_DEBUG("Wrote '{}' characters to clipboard: '{}'", text.size(), text);
+    SPDLOG_DEBUG("Wrote '{}' characters to clipboard", text.size());
 }
 
 }  // namespace core::clipboard
