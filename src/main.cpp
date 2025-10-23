@@ -33,25 +33,25 @@ int main()
         spdlog::set_level(spdlog::level::debug);
 #endif
         // Log low-level debug information
-        SPDLOG_DEBUG("Build - Version: {}, Config: {}, Date: {}, Time: {}",
-                     generated::PROJECT_VERSION,
-                     generated::BUILD_CONFIGURATION,
-                     generated::BUILD_DATE,
-                     generated::BUILD_TIME);
+        SPDLOG_INFO("Build - Version: {}, Config: {}, Date: {}, Time: {}",
+                    generated::PROJECT_VERSION,
+                    generated::BUILD_CONFIGURATION,
+                    generated::BUILD_DATE,
+                    generated::BUILD_TIME);
 
-        SPDLOG_DEBUG("Compiler - {}, C++ standard: {}",
-                     generated::COMPILER_INFO,
-                     generated::CPP_STANDARD);
+        SPDLOG_INFO("Compiler - {}, C++ standard: {}",
+                    generated::COMPILER_INFO,
+                    generated::CPP_STANDARD);
 
-        SPDLOG_DEBUG("Platform - OS: {} ({}), Shared Libs: {}, Strip: {}, LTO: {}",
-                     generated::OPERATING_SYSTEM,
-                     generated::ARCHITECTURE,
-                     generated::BUILD_SHARED_LIBS,
-                     generated::STRIP_ENABLED,
-                     generated::LTO_ENABLED);
+        SPDLOG_INFO("Platform - OS: {} ({}), Shared Libs: {}, Strip: {}, LTO: {}",
+                    generated::OPERATING_SYSTEM,
+                    generated::ARCHITECTURE,
+                    generated::BUILD_SHARED_LIBS,
+                    generated::STRIP_ENABLED,
+                    generated::LTO_ENABLED);
 
-        SPDLOG_DEBUG("Logging - Level: {}",
-                     spdlog::level::to_string_view(spdlog::get_level()));
+        SPDLOG_INFO("Logging - Level: {}",
+                    spdlog::level::to_string_view(spdlog::get_level()));
 
 #if defined(_WIN32)  // Setup UTF-8 input/output
         SPDLOG_DEBUG("Windows platform detected, setting console to UTF-8...");
