@@ -48,9 +48,9 @@ Window::Window()
     SPDLOG_DEBUG("Window created successfully with mode '{}x{}', title '{}', vsync, and context settings (anti-aliasing level: {})", mode.size.x, mode.size.y, window_title, settings.antiAliasingLevel);
 }
 
-void Window::run(const event_callback_type &on_event,
-                 const update_callback_type &on_update,
-                 const render_callback_type &on_render)
+void Window::run(const event_callback_t &on_event,
+                 const update_callback_t &on_update,
+                 const render_callback_t &on_render)
 {
     SPDLOG_INFO("Starting main window loop!");
     sf::Clock clock;

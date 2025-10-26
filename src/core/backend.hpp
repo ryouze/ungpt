@@ -15,13 +15,13 @@ namespace core::backend {
 /**
  * @brief SFML window abstraction class.
  *
- * On construction, the window is created with sane defaults.
+ * On construction, the window is created with sane defaults. Use `run()` to start the main loop.
  */
 class Window {
   public:
-    using event_callback_type = std::function<void(const sf::Event &)>;
-    using update_callback_type = std::function<void(const float)>;
-    using render_callback_type = std::function<void(sf::RenderWindow &)>;
+    using event_callback_t = std::function<void(const sf::Event &)>;
+    using update_callback_t = std::function<void(const float)>;
+    using render_callback_t = std::function<void(sf::RenderWindow &)>;
 
     /**
      * @brief Construct a new SFML window.
@@ -74,13 +74,13 @@ class Window {
      *
      * @note The loop continues until the window is closed. Delta time is clamped to prevent extreme values.
      */
-    void run(const event_callback_type &on_event,
-             const update_callback_type &on_update,
-             const render_callback_type &on_render);
+    void run(const event_callback_t &on_event,
+             const update_callback_t &on_update,
+             const render_callback_t &on_render);
 
   private:
     /**
-     * @brief The underlying SFML RenderWindow instance.
+     * @brief Underlying SFML RenderWindow instance.
      *
      * @note This can be accessed using the "raw()" method.
      */
