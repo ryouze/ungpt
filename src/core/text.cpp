@@ -51,6 +51,11 @@ void remove_unwanted_characters(std::string &text)
         {" ", " "},   // U+205F mathematical space
         {"　", " "},  // U+3000 ideographic space
 
+        // Replace arrow symbols with ASCII equivalents
+        {"→", "->"},   // U+2192 right arrow
+        {"←", "<-"},   // U+2190 left arrow
+        {"↔", "<->"},  // U+2194 left-right arrow
+
         // Remove zero-width and other invisible characters entirely
         {"​", ""},     // U+200B zero-width space
         {"‌", ""},     // U+200C zero-width non-joiner

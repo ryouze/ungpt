@@ -24,6 +24,7 @@ TEST_CASE("remove_unwanted_characters replaces Unicode with ASCII", "[src][core]
         {"Aufgaben: • Erste ‣ Zweite · Dritte ⋅ Vierte ▪ Fünfte", "Aufgaben: * Erste * Zweite * Dritte * Vierte * Fünfte"},
         {"Softer­hyphen bleibt weg", "Softerhyphen bleibt weg"},
         {"Minus − gleich – Strich — Ende", "Minus - gleich - Strich - Ende"},
+        {"Go left (←) or right (→) or both (↔)", "Go left (<-) or right (->) or both (<->)"},
     };
 
     for (const auto &[input_text, expected_text] : test_cases) {
