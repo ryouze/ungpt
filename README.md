@@ -6,6 +6,8 @@
 
 ungpt is a cross-platform GUI app that converts ChatGPT's smart punctuation and symbols to plain ASCII.
 
+![Screenshot](assets/screenshot.jpeg)
+
 
 ## Motivation
 
