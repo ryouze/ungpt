@@ -48,13 +48,13 @@ void Editor::update_and_draw()
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 
     // Begin the root window that contains the entire interface
-    if (ImGui::Begin("##root", nullptr, root_flags)) {
+    if (ImGui::Begin("##root", nullptr, root_flags)) [[likely]] {
 
         // Child windows should not expose scrollbars
         constexpr ImGuiWindowFlags child_flags = ImGuiWindowFlags_NoScrollbar;
 
         // Begin a child window that holds the toolbar widgets
-        if (ImGui::BeginChild("##topbar", ImVec2(0.0f, 0.0f), ImGuiChildFlags_AutoResizeY, child_flags)) {
+        if (ImGui::BeginChild("##topbar", ImVec2(0.0f, 0.0f), ImGuiChildFlags_AutoResizeY, child_flags)) [[likely]] {
             // Draw the toolbar contents into the child window
             this->update_and_draw_top_bar();
         }
@@ -72,7 +72,7 @@ void Editor::update_and_draw()
         const float main_height = std::max(0.0f, ImGui::GetContentRegionAvail().y - bottom_row_h);
 
         // Begin the child window that hosts the text editor
-        if (ImGui::BeginChild("##main", ImVec2(0.0f, main_height), ImGuiChildFlags_None, child_flags)) {
+        if (ImGui::BeginChild("##main", ImVec2(0.0f, main_height), ImGuiChildFlags_None, child_flags)) [[likely]] {
             // Draw the multiline editor widget
             this->update_and_draw_editor();
         }
@@ -84,7 +84,7 @@ void Editor::update_and_draw()
         ImGui::PopStyleVar();
 
         // Begin the child window that hosts the bottom status bar
-        if (ImGui::BeginChild("##bottom", ImVec2(0.0f, 0.0f), ImGuiChildFlags_AutoResizeY, child_flags)) {
+        if (ImGui::BeginChild("##bottom", ImVec2(0.0f, 0.0f), ImGuiChildFlags_AutoResizeY, child_flags)) [[likely]] {
             // Draw the live metrics into the status bar
             this->update_and_draw_bottom_status();
         }
@@ -150,7 +150,7 @@ void Editor::update_and_draw_top_bar()
     ImGui::SetCursorPosX(offset_x);
 
     // Render the paste button that pulls text from the clipboard helper
-    if (ImGui::Button(labels[0].c_str())) {
+    if (ImGui::Button(labels[0].c_str())) [[unlikely]] {
         SPDLOG_DEBUG("Paste button was pressed");
         this->text_ = core::clipboard::read_from_clipboard();
     }
@@ -159,7 +159,7 @@ void Editor::update_and_draw_top_bar()
     ImGui::SameLine();
 
     // Render the normalize button that cleans up smart punctuation via core::text
-    if (ImGui::Button(labels[1].c_str())) {
+    if (ImGui::Button(labels[1].c_str())) [[unlikely]] {
         SPDLOG_DEBUG("Normalize button was pressed");
         core::text::remove_unwanted_characters(this->text_);
     }
@@ -168,7 +168,7 @@ void Editor::update_and_draw_top_bar()
     ImGui::SameLine();
 
     // Render the copy button that pushes text to the clipboard helper
-    if (ImGui::Button(labels[2].c_str())) {
+    if (ImGui::Button(labels[2].c_str())) [[unlikely]] {
         SPDLOG_DEBUG("Copy button was pressed");
         core::clipboard::write_to_clipboard(this->text_);
     }
@@ -177,7 +177,7 @@ void Editor::update_and_draw_top_bar()
     ImGui::SameLine();
 
     // Render the clear button that empties the editor text
-    if (ImGui::Button(labels[3].c_str())) {
+    if (ImGui::Button(labels[3].c_str())) [[unlikely]] {
         SPDLOG_DEBUG("Clear button was pressed");
         this->text_.clear();
     }
@@ -186,7 +186,7 @@ void Editor::update_and_draw_top_bar()
     ImGui::SameLine();
 
     // Render the help button that opens the usage modal
-    if (ImGui::Button(labels[4].c_str())) {
+    if (ImGui::Button(labels[4].c_str())) [[unlikely]] {
         SPDLOG_DEBUG("Help button was pressed");
         this->is_help_modal_open_ = true;
     }
@@ -234,7 +234,7 @@ void Editor::update_and_draw_usage_modal()
     const bool popup_visible = ImGui::IsPopupOpen("Usage", ImGuiPopupFlags_AnyPopupId);
 
     // Open the popup only when the UI requested it and it is currently closed
-    if (this->is_help_modal_open_ && !popup_visible) {
+    if (this->is_help_modal_open_ && !popup_visible) [[unlikely]] {
         ImGui::OpenPopup("Usage");
     }
 
@@ -248,13 +248,13 @@ void Editor::update_and_draw_usage_modal()
     ImGui::SetNextWindowPos(display_center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 
     // Begin the modal popup and populate it when the window becomes visible
-    if (ImGui::BeginPopupModal("Usage", nullptr, modal_flags)) {
+    if (ImGui::BeginPopupModal("Usage", nullptr, modal_flags)) [[unlikely]] {
         // Detect whether the user clicked outside the popup to dismiss it
         const bool clicked_outside = ImGui::IsMouseClicked(ImGuiMouseButton_Left) &&
                                      !ImGui::IsWindowHovered();
 
         // Close the popup when the toggle was cleared or an outside click occurred
-        if (!this->is_help_modal_open_ || clicked_outside) {
+        if (!this->is_help_modal_open_ || clicked_outside) [[unlikely]] {
             this->is_help_modal_open_ = false;
             ImGui::CloseCurrentPopup();
         }
@@ -269,7 +269,7 @@ void Editor::update_and_draw_usage_modal()
     }
 
     // Clear the open flag when the popup is no longer present
-    if (!ImGui::IsPopupOpen("Usage", ImGuiPopupFlags_AnyPopupId)) {
+    if (!ImGui::IsPopupOpen("Usage", ImGuiPopupFlags_AnyPopupId)) [[likely]] {
         this->is_help_modal_open_ = false;
     }
 }
