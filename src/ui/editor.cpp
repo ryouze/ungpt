@@ -205,7 +205,6 @@ void Editor::update_and_draw_editor()
     ImGui::InputTextMultiline("##text", &this->text_, size, ImGuiInputTextFlags_AllowTabInput);
 }
 
-// Define the routine that shows live text metrics
 void Editor::update_and_draw_bottom_status() const
 {
     // Count the number of words within the current text
