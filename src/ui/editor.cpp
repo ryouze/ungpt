@@ -153,6 +153,7 @@ void Editor::update_and_draw_top_bar()
     if (ImGui::Button(labels[0].c_str())) [[unlikely]] {
         SPDLOG_DEBUG("Paste button was pressed");
         this->text_ = core::clipboard::read_from_clipboard();
+        this->text_metrics_need_update_ = true;
     }
 
     // Keep subsequent buttons on the same row
@@ -162,6 +163,7 @@ void Editor::update_and_draw_top_bar()
     if (ImGui::Button(labels[1].c_str())) [[unlikely]] {
         SPDLOG_DEBUG("Normalize button was pressed");
         core::text::remove_unwanted_characters(this->text_);
+        this->text_metrics_need_update_ = true;
     }
 
     // Keep the next button on the same row
@@ -180,6 +182,7 @@ void Editor::update_and_draw_top_bar()
     if (ImGui::Button(labels[3].c_str())) [[unlikely]] {
         SPDLOG_DEBUG("Clear button was pressed");
         this->text_.clear();
+        this->text_metrics_need_update_ = true;
     }
 
     // Keep the help button on the same row
@@ -198,15 +201,27 @@ void Editor::update_and_draw_editor()
     const ImVec2 size = ImGui::GetContentRegionAvail();
 
     // Submit the multiline text widget that edits the internal text
-    ImGui::InputTextMultiline("##text", &this->text_, size, ImGuiInputTextFlags_AllowTabInput);
+    if (ImGui::InputTextMultiline("##text", &this->text_, size, ImGuiInputTextFlags_AllowTabInput)) {
+        this->text_metrics_need_update_ = true;
+    }
 }
 
-void Editor::update_and_draw_bottom_status() const
+void Editor::update_and_draw_bottom_status()
 {
+    if (this->text_metrics_need_update_) {
+        this->word_count_ = core::text::count_words(this->text_);
+        this->character_count_ = core::text::count_characters(this->text_);
+        this->text_metrics_need_update_ = false;
+
+        SPDLOG_DEBUG("Recalculated text metrics ({} words, {} characters)",
+                     this->word_count_,
+                     this->character_count_);
+    }
+
     // Calculate the metrics and format them into a status string
     const std::string status = std::format("Words: {}  Characters: {}",
-                                           core::text::count_words(this->text_),
-                                           core::text::count_characters(this->text_));
+                                           this->word_count_,
+                                           this->character_count_);
 
     // Determine the available width within the status bar
     const float available_width = ImGui::GetContentRegionAvail().x;
