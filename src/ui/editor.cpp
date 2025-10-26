@@ -203,14 +203,10 @@ void Editor::update_and_draw_editor()
 
 void Editor::update_and_draw_bottom_status() const
 {
-    // Count the number of words within the current text
-    const std::size_t word_count = core::text::count_words(this->text_);
-
-    // Count the number of characters within the current text
-    const std::size_t char_count = core::text::count_characters(this->text_);
-
-    // Format the status string using the current metrics
-    const std::string status = std::format("Words: {}  Characters: {}", word_count, char_count);
+    // Calculate the metrics and format them into a status string
+    const std::string status = std::format("Words: {}  Characters: {}",
+                                           core::text::count_words(this->text_),
+                                           core::text::count_characters(this->text_));
 
     // Determine the available width within the status bar
     const float available_width = ImGui::GetContentRegionAvail().x;
