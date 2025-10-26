@@ -33,7 +33,7 @@ void Editor::update_and_draw()
     // Force the next window size to match the current viewport
     ImGui::SetNextWindowSize(io.DisplaySize, ImGuiCond_Always);
 
-    // Combine window flags that remove chrome and disable scrolling
+    // Combine window flags to hide the title bar and disable scrolling
     constexpr ImGuiWindowFlags root_flags = ImGuiWindowFlags_NoTitleBar |
                                             ImGuiWindowFlags_NoResize |
                                             ImGuiWindowFlags_NoMove |
@@ -52,8 +52,13 @@ void Editor::update_and_draw()
 
     // Begin the root window that contains the entire interface
     if (ImGui::Begin("##root", nullptr, root_flags)) {
+
+        // Child windows should not expose scrollbars
+        constexpr ImGuiWindowFlags child_flags = ImGuiWindowFlags_NoScrollbar |
+                                                 ImGuiWindowFlags_NoScrollWithMouse;
+
         // Begin a child window that holds the toolbar widgets
-        if (ImGui::BeginChild("##topbar", ImVec2(0, 0), ImGuiChildFlags_AutoResizeY, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
+        if (ImGui::BeginChild("##topbar", ImVec2(0.0f, 0.0f), ImGuiChildFlags_AutoResizeY, child_flags)) {
             // Draw the toolbar contents into the child window
             this->update_and_draw_top_bar();
         }
@@ -71,7 +76,7 @@ void Editor::update_and_draw()
         const float main_height = std::max(0.0f, ImGui::GetContentRegionAvail().y - bottom_row_h);
 
         // Begin the child window that hosts the text editor
-        if (ImGui::BeginChild("##main", ImVec2(0, main_height), ImGuiChildFlags_None, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
+        if (ImGui::BeginChild("##main", ImVec2(0.0f, main_height), ImGuiChildFlags_None, child_flags)) {
             // Draw the multiline editor widget
             this->update_and_draw_editor();
         }
@@ -83,7 +88,7 @@ void Editor::update_and_draw()
         ImGui::PopStyleVar();
 
         // Begin the child window that hosts the bottom status bar
-        if (ImGui::BeginChild("##bottom", ImVec2(0, 0), ImGuiChildFlags_AutoResizeY, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
+        if (ImGui::BeginChild("##bottom", ImVec2(0.0f, 0.0f), ImGuiChildFlags_AutoResizeY, child_flags)) {
             // Draw the live metrics into the status bar
             this->update_and_draw_bottom_status();
         }
@@ -143,7 +148,7 @@ void Editor::update_and_draw_top_bar()
     static const std::array<std::string, 5> labels = {"Paste", "Normalize", "Copy", "Clear", "?"};
 
     // Compute a horizontal offset that centers the toolbar buttons
-    const float offset_x = this->calculate_center_offset_for_labels(std::span<const std::string>(labels.data(), labels.size()));
+    const float offset_x = this->calculate_center_offset_for_labels(std::span<const std::string>(labels));
 
     // Move the cursor so the buttons start centered within the region
     ImGui::SetCursorPosX(offset_x);
@@ -231,8 +236,8 @@ void Editor::update_and_draw_bottom_status() const
 void Editor::update_and_draw_usage_modal()
 {
     // Lock the modal size to its content and prevent manual repositioning
-    static constexpr ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize |
-                                              ImGuiWindowFlags_NoMove;
+    constexpr ImGuiWindowFlags modal_flags = ImGuiWindowFlags_AlwaysAutoResize |
+                                             ImGuiWindowFlags_NoMove;
 
     // Query whether the popup is already open to avoid redundant open calls
     const bool popup_visible = ImGui::IsPopupOpen("Usage", ImGuiPopupFlags_AnyPopupId);
@@ -242,17 +247,17 @@ void Editor::update_and_draw_usage_modal()
         ImGui::OpenPopup("Usage");
     }
 
-    // Fetch the active viewport so the popup can be aligned to its center
-    const ImGuiViewport *viewport = ImGui::GetMainViewport();
+    // Fetch the global ImGui IO state for display size queries
+    const ImGuiIO &io = ImGui::GetIO();
 
-    // Compute the target center position or fall back to the origin when missing
-    const ImVec2 viewport_center = viewport != nullptr ? viewport->GetCenter() : ImVec2(0.0f, 0.0f);
+    // Compute the target center position based on the display size
+    const ImVec2 display_center = ImVec2(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f);
 
-    // Force the modal to stay centered relative to the viewport
-    ImGui::SetNextWindowPos(viewport_center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+    // Force the modal to stay centered relative to the display
+    ImGui::SetNextWindowPos(display_center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 
     // Begin the modal popup and populate it when the window becomes visible
-    if (ImGui::BeginPopupModal("Usage", nullptr, flags)) {
+    if (ImGui::BeginPopupModal("Usage", nullptr, modal_flags)) {
         // Detect whether the user clicked outside the popup to dismiss it
         const bool clicked_outside = ImGui::IsMouseClicked(ImGuiMouseButton_Left) &&
                                      !ImGui::IsWindowHovered();
