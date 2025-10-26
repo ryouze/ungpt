@@ -33,12 +33,9 @@ void Editor::update_and_draw()
     // Force the next window size to match the current viewport
     ImGui::SetNextWindowSize(io.DisplaySize, ImGuiCond_Always);
 
-    // Combine window flags to hide the title bar and disable scrolling
-    constexpr ImGuiWindowFlags root_flags = ImGuiWindowFlags_NoTitleBar |
-                                            ImGuiWindowFlags_NoResize |
+    // Combine window flags to hide decoration, disable moving, and ignore mouse-wheel scrolling
+    constexpr ImGuiWindowFlags root_flags = ImGuiWindowFlags_NoDecoration |
                                             ImGuiWindowFlags_NoMove |
-                                            ImGuiWindowFlags_NoCollapse |
-                                            ImGuiWindowFlags_NoScrollbar |
                                             ImGuiWindowFlags_NoScrollWithMouse;
 
     // Push consistent padding derived from the configured style
@@ -54,8 +51,7 @@ void Editor::update_and_draw()
     if (ImGui::Begin("##root", nullptr, root_flags)) {
 
         // Child windows should not expose scrollbars
-        constexpr ImGuiWindowFlags child_flags = ImGuiWindowFlags_NoScrollbar |
-                                                 ImGuiWindowFlags_NoScrollWithMouse;
+        constexpr ImGuiWindowFlags child_flags = ImGuiWindowFlags_NoScrollbar;
 
         // Begin a child window that holds the toolbar widgets
         if (ImGui::BeginChild("##topbar", ImVec2(0.0f, 0.0f), ImGuiChildFlags_AutoResizeY, child_flags)) {
