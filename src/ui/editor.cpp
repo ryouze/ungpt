@@ -141,7 +141,7 @@ float Editor::calculate_center_offset_for_labels(std::span<const std::string> la
 void Editor::update_and_draw_top_bar()
 {
     // Prepare a fixed list of button labels for toolbar actions
-    static const std::array<std::string, 5> labels = {"Paste", "Normalize", "Copy", "Clear", "?"};
+    constexpr std::array<std::string, 5> labels = {"Paste", "Normalize", "Copy", "Clear", "?"};
 
     // Compute a horizontal offset that centers the toolbar buttons
     const float offset_x = this->calculate_center_offset_for_labels(std::span<const std::string>(labels));
