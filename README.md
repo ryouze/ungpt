@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/ryouze/ungpt/actions/workflows/ci.yml/badge.svg)](https://github.com/ryouze/ungpt/actions/workflows/ci.yml)
 [![Release](https://github.com/ryouze/ungpt/actions/workflows/release.yml/badge.svg)](https://github.com/ryouze/ungpt/actions/workflows/release.yml)
-![Release version](https://img.shields.io/github/v/release/ryouze/ungpt)
+![Release version](https://img.shields.io/github/v/release/ryouze/ungpt?include_prereleases)
 
 ungpt is a cross-platform GUI app that converts ChatGPT's smart punctuation and symbols to plain ASCII.
 
