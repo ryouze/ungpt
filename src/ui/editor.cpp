@@ -4,7 +4,6 @@
 
 #include <algorithm>  // for std::max
 #include <array>      // for std::array
-#include <cstddef>    // for std::size_t
 #include <format>     // for std::format
 #include <span>       // for std::span
 #include <string>     // for std::string
