@@ -28,6 +28,7 @@ TEST_CASE("remove_unwanted_characters replaces Unicode with ASCII", "[src][core]
     };
 
     for (const auto &[input_text, expected_text] : test_cases) {
+        CAPTURE(input_text);
         // `remove_unwanted_characters` modifies a string in place so we need a mutable copy
         std::string modified_text = input_text;
         core::text::remove_unwanted_characters(modified_text);
@@ -57,6 +58,7 @@ TEST_CASE("count_words returns correct word count", "[src][core][text.hpp]")
     };
 
     for (const auto &[input_text, expected_count] : test_cases) {
+        CAPTURE(input_text);
         CHECK(core::text::count_words(input_text) == expected_count);
     }
 }
@@ -81,6 +83,7 @@ TEST_CASE("count_characters returns correct character count", "[src][core][text.
     };
 
     for (const auto &[input_text, expected_count] : test_cases) {
+        CAPTURE(input_text);
         CHECK(core::text::count_characters(input_text) == expected_count);
     }
 }
