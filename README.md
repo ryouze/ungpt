@@ -13,13 +13,15 @@ ungpt is a cross-platform GUI app that converts ChatGPT's smart punctuation and 
 
 I often use ChatGPT to correct grammar and spelling errors. It's smarter than a regular spell checker.
 
-However, it often produces text containing "smart" punctuation and typographic Unicode symbols, such as:
+However, it frequently outputs text containing "smart" punctuation and typographic Unicode symbols, such as:
 
 * Em dashes (`—`) instead of ASCII dashes (`-`)
 * Curly quotes (`“ ” ‘ ’`) instead of straight quotes (`" '`)
 * Ellipses (`…`) instead of three dots (`...`)
 
-Manually fixing these with Find & Replace is tedious. I do it so frequently that I decided to build a small app to automate the process.
+Manually fixing these with Find & Replace is tedious. I do it so often that I decided to build a small app to automate the process.
+
+I chose SFML and ImGui because I wanted to cobble something together quickly.
 
 All you have to do is paste text from ChatGPT and copy the clean result.
 
