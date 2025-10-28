@@ -41,11 +41,11 @@ Window::Window()
     // Set minimum size (only relevant for windowed mode)
     this->window_.setMinimumSize(sf::Vector2u{400, 200});
 
-    // Enable vsync (remember: you cannot use both FPS limit and vsync at the same time)
-    this->window_.setVerticalSyncEnabled(true);
+    // Set 30 FPS limit for reduced CPU usage (remember: you cannot use both FPS limit and vsync at the same time)
+    this->window_.setFramerateLimit(30);
 
     // Log the successful creation of the window
-    SPDLOG_DEBUG("Window created successfully with mode '{}x{}', title '{}', vsync, and context settings (anti-aliasing level: {})", mode.size.x, mode.size.y, window_title, settings.antiAliasingLevel);
+    SPDLOG_DEBUG("Window created successfully with mode '{}x{}', title '{}', 30 FPS limit, and context settings (anti-aliasing level: {})", mode.size.x, mode.size.y, window_title, settings.antiAliasingLevel);
 }
 
 void Window::run(const event_callback_t &on_event,
