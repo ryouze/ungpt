@@ -149,7 +149,7 @@ void Editor::update_and_draw_top_bar()
     ImGui::SetCursorPosX(offset_x);
 
     // Render the paste button that pulls text from the clipboard helper
-    if (ImGui::Button(labels[0].c_str())) [[unlikely]] {
+    if (ImGui::Button(labels[0].c_str()))  {
         SPDLOG_DEBUG("Paste button was pressed");
         this->text_ = core::clipboard::read_from_clipboard();
         this->text_metrics_need_update_ = true;
@@ -159,7 +159,7 @@ void Editor::update_and_draw_top_bar()
     ImGui::SameLine();
 
     // Render the normalize button that cleans up smart punctuation via core::text
-    if (ImGui::Button(labels[1].c_str())) [[unlikely]] {
+    if (ImGui::Button(labels[1].c_str()))  {
         SPDLOG_DEBUG("Normalize button was pressed");
         core::text::remove_unwanted_characters(this->text_);
         this->text_metrics_need_update_ = true;
@@ -169,7 +169,7 @@ void Editor::update_and_draw_top_bar()
     ImGui::SameLine();
 
     // Render the copy button that pushes text to the clipboard helper
-    if (ImGui::Button(labels[2].c_str())) [[unlikely]] {
+    if (ImGui::Button(labels[2].c_str()))  {
         SPDLOG_DEBUG("Copy button was pressed");
         core::clipboard::write_to_clipboard(this->text_);
     }
@@ -178,7 +178,7 @@ void Editor::update_and_draw_top_bar()
     ImGui::SameLine();
 
     // Render the clear button that empties the editor text
-    if (ImGui::Button(labels[3].c_str())) [[unlikely]] {
+    if (ImGui::Button(labels[3].c_str()))  {
         SPDLOG_DEBUG("Clear button was pressed");
         this->text_.clear();
         this->text_metrics_need_update_ = true;
@@ -188,7 +188,7 @@ void Editor::update_and_draw_top_bar()
     ImGui::SameLine();
 
     // Render the help button that opens the usage modal
-    if (ImGui::Button(labels[4].c_str())) [[unlikely]] {
+    if (ImGui::Button(labels[4].c_str()))  {
         SPDLOG_DEBUG("Help button was pressed");
         this->is_help_modal_open_ = true;
     }
@@ -248,7 +248,7 @@ void Editor::update_and_draw_usage_modal()
     const bool popup_visible = ImGui::IsPopupOpen("Usage", ImGuiPopupFlags_AnyPopupId);
 
     // Open the popup only when the UI requested it and it is currently closed
-    if (this->is_help_modal_open_ && !popup_visible) [[unlikely]] {
+    if (this->is_help_modal_open_ && !popup_visible)  {
         ImGui::OpenPopup("Usage");
     }
 
@@ -262,13 +262,13 @@ void Editor::update_and_draw_usage_modal()
     ImGui::SetNextWindowPos(display_center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 
     // Begin the modal popup and populate it when the window becomes visible
-    if (ImGui::BeginPopupModal("Usage", nullptr, modal_flags)) [[unlikely]] {
+    if (ImGui::BeginPopupModal("Usage", nullptr, modal_flags))  {
         // Detect whether the user clicked outside the popup to dismiss it
         const bool clicked_outside = ImGui::IsMouseClicked(ImGuiMouseButton_Left) &&
                                      !ImGui::IsWindowHovered();
 
         // Close the popup when the toggle was cleared or an outside click occurred
-        if (!this->is_help_modal_open_ || clicked_outside) [[unlikely]] {
+        if (!this->is_help_modal_open_ || clicked_outside)  {
             this->is_help_modal_open_ = false;
             ImGui::CloseCurrentPopup();
         }
